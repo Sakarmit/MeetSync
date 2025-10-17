@@ -1,0 +1,37 @@
+{
+  "slot_minutes": 30,
+  "meeting_length_minutes": 60,
+  "days": ["2025-10-20", "2025-10-21"],
+  "attendees": [
+    {
+      "name": "Ethan",
+      "priority": 2,
+      "availability_matrix": [
+        [2,2,1,0,2,2,1],
+        [2,1,1,2,2,0,0]
+      ]
+    },
+    {
+      "name": "Brandon",
+      "priority": 1,
+      "availability_matrix": [
+        [2,2,2,1,0,2,2],
+        [1,1,2,2,2,2,0]
+      ]
+    },
+    {
+      "name": "Brian",
+      "priority": 3,
+      "availability_matrix": [
+        [2,2,0,0,2,2,2],
+        [1,2,2,2,1,0,0]
+      ]
+    }
+  ],
+  "weights": {
+    "avail_scores": {"2": 1.0, "1": 0.5, "0": 0.0},
+    "unpreferred_penalty_per_person": 0.1,
+    "hard_block_for_high_priority": true
+  },
+  "top_k": 5
+}
