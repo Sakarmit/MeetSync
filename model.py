@@ -1,4 +1,5 @@
 from typing import List, Dict, Any
+import math
 
 DEFAULT_AVAIL_SCORES = {0: 0.0, 1: 0.5, 2: 1.0}
 
@@ -122,8 +123,9 @@ def model(data: dict) -> dict:
                 raise ValueError(f"All attendees must have the same number of slots on day index {d}.")
         day_slot_counts.append(slots_d)
 
-    L = meeting_len_minutes // slot_minutes
+    L = math.ceil(meeting_len_minutes / slot_minutes)
     if L <= 0:
+        L = 1
         raise ValueError("meeting_length_minutes must be at least 1 slot (>= slot_minutes).")
 
     weights = data.get("weights", {})
