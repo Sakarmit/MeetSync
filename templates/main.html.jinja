@@ -1,0 +1,30 @@
+{% extends "base.html.jinja" %}
+
+{% block title %}WeekSync{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', path='styles/main.css') }}" />
+  <script src="{{ url_for('static', path='scripts/main.js') }}" type="module"></script>
+{% endblock %}
+
+{% block content %}
+  {% include "users_side_bar.html.jinja" %}
+
+  <main class="main-content">
+    <header>
+      <h1>WeekSync</h1>
+      <div class="user-name-control">
+        <label for="user-name">Name:</label>
+        <input
+          id="user-name"
+          type="text"
+          placeholder="Enter current user's name"
+          required
+        />
+        <button class="save" type="button">Save</button>
+      </div>
+    </header>
+
+    {% include "schedule.html.jinja" %}
+  </main>
+{% endblock %}

@@ -1,0 +1,42 @@
+<div class="availability-schedule">
+  <div class="days">
+    {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] %}
+    {% for label in days %}
+      <div class="label">{{ label }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="body">
+    <div class="times">
+      {# Only show 9:00–17:00 hour labels (9..=16) #}
+      {% for h in range(9,17) %}
+        <div class="label">{{ "%02d:00" % h }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="slots">
+      {# 8 hours × 4 rows/hour = 32 rows; 5 days #}
+      {% for r in range(0,32) %}
+        {% for d in range(0,5) %}
+          {# Compute absolute minutes = r*15 + 9*60 for aria label #}
+          {% set abs_min = r * 15 + 9 * 60 %}
+          {% set hour = (abs_min // 60) %}
+          {% set minute = abs_min % 60 %}
+          <div
+            class="slot"
+            data-day="{{ d }}"
+            data-row="{{ r }}"
+            aria-label="{{ days[d] }}, {{ '%02d'|format(hour) }}:{{ '%02d'|format(minute) }}"
+            role="button"
+          ></div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button type="button" class="clear">Clear</button>
+    <button type="button" class="save">Save</button>
+    <button type="button" class="submit">Submit</button>
+  </div>
+</div>
