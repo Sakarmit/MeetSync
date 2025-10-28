@@ -15,8 +15,7 @@ async function submitAvailability(users) {
     body: JSON.stringify({ availability }),
   });
 
-  if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
-
+  if (!response.ok) throw new Error((await response.json()).detail || response.statusText);
   return await response.json();
 }
 
