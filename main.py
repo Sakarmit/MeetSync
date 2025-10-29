@@ -1,18 +1,38 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from model import model
+from services.transformer import is_frontend_payload, transform_frontend_to_model_payload
+from templates import templates
 
-app = FastAPI()
+app = FastAPI(title="MeetSync Backend", version="1.0.0")
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.get("/", response_class=HTMLResponse)
+async def main_page(request: Request):
+    return templates.TemplateResponse("main.html.jinja", {"request": request})
 
+@app.get("/health")
+def health():
+    return {"ok": True}
 
 @app.post("/call-model", response_class=JSONResponse)
 async def call_model(request: Request):
-    # Insert backend code here or in `model.py`
-    data = await request.json()
-    return model(data)
+    try:
+        data = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON body")
+
+    try:
+        payload = transform_frontend_to_model_payload(data) if is_frontend_payload(data) else data
+        result = model(payload)
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {e}")
+
+    return JSONResponse(result)
+

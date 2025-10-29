@@ -1,0 +1,98 @@
+#user-sidebar {
+  width: 16.25rem;
+  max-width: 30%;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 1rem;
+  border-right: 1px solid var(--stone-3);
+  background: var(--gray-0);
+  overflow: auto;
+
+  > header {
+    margin-bottom: 0.5rem;
+  }
+  > header > h1 {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-6);
+  }
+}
+
+/* Create User Section */
+
+#user-sidebar > .create-user-section {
+  margin-bottom: 1rem;
+}
+
+.create-user-section {
+  padding: 0.5rem;
+  border: 1px dashed var(--stone-4);
+  border-radius: 0.25rem;
+  background: white;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.create-user-section > label {
+  display: block;
+  color: var(--gray-8);
+}
+
+#create-user-input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-3);
+  border-radius: 0.25rem;
+}
+
+.create-user-section > button.create {
+  margin-left: auto;
+  background: var(--blue-7);
+  color: white;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+/* User list */
+
+ul.user-list {
+  list-style: none;
+  padding: 0;
+}
+
+ul.user-list > .item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--stone-3);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  > .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  > button.select {
+    margin-left: 0.5rem;
+    background: var(--blue-7);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+}
+
+ul.user-list > .no-users-message {
+  margin-top: 1rem;
+  color: var(--gray-8);
+
+  &.hidden {
+    display: none;
+  }
+}

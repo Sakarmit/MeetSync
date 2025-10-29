@@ -1,0 +1,20 @@
+<aside id="user-sidebar">
+  <header><h1>Users</h1></header>
+
+  <div class="create-user-section">
+    <label for="create-user-input">Add user</label>
+    <input id="create-user-input" type="text" placeholder="Enter new user's name" />
+    <button type="button" class="create">Create</button>
+    <div id="create-user-feedback" class="create-user-feedback" aria-live="polite"></div>
+  </div>
+
+  <ul class="user-list">
+    <template>
+      <li class="item">
+        <div class="name"></div>
+        <button type="button" class="select">Select</button>
+      </li>
+    </template>
+    <li class="no-users-message">No users</li>
+  </ul>
+</aside>
