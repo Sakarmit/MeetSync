@@ -1,4 +1,3 @@
-from http.client import HTTPException
 from typing import Any, Dict, List
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -110,14 +109,14 @@ def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
     attendees: List[Dict[str, Any]] = []
 
     for user in availability:
-        matrix = [[0 for _ in range(SLOTS_PER_DAY)] for _ in range(5)]
+        matrix = [[2 for _ in range(SLOTS_PER_DAY)] for _ in range(5)]
 
         for ts in user.get("timeSlots", []):
             day = int(ts["day"])
             start_row = int((int(ts["startMinute"]) - DAY_START_MIN) / SLOT_MINUTES)
             end_row = int((int(ts["endMinute"]) - DAY_START_MIN) / SLOT_MINUTES)
             for r in range(start_row, end_row):
-                matrix[day][r] = 2
+                matrix[day][r] = 0
 
         attendees.append({
             "name": user.get("name"),
