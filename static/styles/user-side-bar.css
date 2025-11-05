@@ -108,13 +108,21 @@ ul.user-list > .item {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  > button.select {
-    margin-left: 0.5rem;
-    background: var(--blue-7);
-    color: white;
-    border: none;
-    padding: 0.3rem 0.5rem;
-    border-radius: 0.25rem;
+  > .list-item-options {
+    display: flex;
+    align-items: center;
+    > .delete {
+      height: 1.4rem;
+      cursor: pointer;
+    }
+    > .select {
+      margin-left: 0.5rem;
+      background: var(--blue-7);
+      color: white;
+      border: none;
+      padding: 0.3rem 0.5rem;
+      border-radius: 0.25rem;
+    }
   }
 }
 

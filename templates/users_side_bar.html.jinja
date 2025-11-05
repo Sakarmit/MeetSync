@@ -16,7 +16,10 @@
     <template>
       <li class="item">
         <div class="name"></div>
-        <button type="button" class="select">Select</button>
+        <div class="list-item-options">
+          <img class="delete" src="{{ url_for('static', path='styles/images/delete.png') }}" />
+          <button type="button" class="select">Select</button>
+        </div>
       </li>
     </template>
     <li class="no-users-message">No users</li>

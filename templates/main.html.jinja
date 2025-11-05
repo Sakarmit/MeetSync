@@ -10,9 +10,12 @@
 {% block content %}
   {% include "users_side_bar.html.jinja" %}
 
-  <main class="main-content">
+  <main class="main-content no-user-selected ">
     <header>
-      <h1>MeetSync</h1>
+      <div class="options-bar">
+        <h1>MeetSync</h1>
+        <button type="button" class="submit">Submit</button>
+      </div>
       <div class="user-control">
         <label for="user-name">Name:</label>
         <input

@@ -22,6 +22,18 @@ function createUserListItem(name, id) {
   itemElement
     .querySelector("button.select")
     .addEventListener("click", () => eventBus.selectUser(id));
+  itemElement
+    .querySelector("img.delete")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      const feedback = document.getElementById("create-user-feedback");
+      feedback.textContent = `User "${name}" deleted.`;
+      e.target.parentElement.parentElement.remove();
+      if (context.users.length - 1 === 0) {
+        document.querySelector(".no-users-message").classList.remove("hidden");
+      }
+      eventBus.deleteUser(id);
+    });
 
   return itemElement;
 }
@@ -60,6 +72,11 @@ function initUserSideBar() {
   });
 
   eventBus.addEventListener("selectedUser:updated", () => {
+    if (context.selectedUserId === null) {
+      document.querySelector(".main-content").classList.add("no-user-selected");
+      return;
+    }
+
     const idx = context.users.findIndex((u) => u.id === context.selectedUserId);
     const listItems = document.querySelectorAll("ul.user-list > li:not(.no-users-message)");
     const listItem = listItems[idx];

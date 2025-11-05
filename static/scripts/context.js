@@ -62,6 +62,24 @@ class EventBus extends EventTarget {
 
     this.dispatchEvent(new Event("selectedUser:selected"));
   }
+
+  /**
+   * Delete a user from the context.
+   * @param {Symbol} id - ID of the user to delete.
+   */
+  deleteUser(id) {
+    const idx = context.users.findIndex((u) => u.id === id);
+    if (idx === -1) throw new Error("User ID not found in context.");
+
+    context.users.splice(idx, 1);
+
+    if (context.selectedUserId === id) {
+      context.selectedUserId = null;
+      this.dispatchEvent(new Event("selectedUser:updated"));
+    }
+
+    this.dispatchEvent(new Event("users:updated"));
+  }
 }
 
 const eventBus = new EventBus();

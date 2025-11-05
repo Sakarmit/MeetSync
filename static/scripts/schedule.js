@@ -83,6 +83,4 @@ function initializeSchedule() {
   });
 }
 
-const SUBMIT_BUTTON_SELECTOR = ".availability-schedule button.submit";
-
-export { initializeSchedule, SUBMIT_BUTTON_SELECTOR };
+export { initializeSchedule };

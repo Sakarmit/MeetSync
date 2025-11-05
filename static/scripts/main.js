@@ -1,12 +1,12 @@
 import { submitAvailability } from "./api.js";
 import { context, eventBus } from "./context.js";
 import { initUserSideBar } from "./user_side_bar.js";
-import { initializeSchedule, SUBMIT_BUTTON_SELECTOR } from "./schedule.js";
+import { initializeSchedule } from "./schedule.js";
 
 initUserSideBar();
 initializeSchedule();
 
-document.querySelector(SUBMIT_BUTTON_SELECTOR).addEventListener("click", async () => {
+document.querySelector("main.main-content header div.options-bar button.submit").addEventListener("click", async () => {
   const users = context.users;
   const meeting_length_minutes = context.meeting_length_minutes;
 
@@ -20,6 +20,7 @@ document.querySelector(SUBMIT_BUTTON_SELECTOR).addEventListener("click", async (
 });
 
 eventBus.addEventListener("selectedUser:selected", () => {
+  document.querySelector(".main-content").classList.remove("no-user-selected");
   const input_name = document.getElementById("user-name");
   const input_priority = document.getElementById("user-priority");
   const selectedUser = context.users.find((u) => u.id === context.selectedUserId);
