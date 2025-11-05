@@ -15,6 +15,8 @@ const context = {
   users: [],
   /** @type {Symbol|null} */
   selectedUserId: null,
+  /** @type {number} */
+  meeting_length_minutes: 15,
 };
 
 class EventBus extends EventTarget {

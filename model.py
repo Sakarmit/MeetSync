@@ -126,7 +126,7 @@ def model(data: dict) -> dict:
     L = math.ceil(meeting_len_minutes / slot_minutes)
     if L <= 0:
         L = 1
-        raise ValueError("meeting_length_minutes must be at least 1 slot (>= slot_minutes).")
+        # raise ValueError("meeting_length_minutes must be at least 1 slot (>= slot_minutes).")
 
     weights = data.get("weights", {})
     avail_scores_cfg = weights.get("avail_scores")

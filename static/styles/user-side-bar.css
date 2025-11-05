@@ -58,6 +58,36 @@
   border-radius: 0.25rem;
 }
 
+/* Settings Section */
+
+#user-sidebar > .settings-section {
+  margin-bottom: 1rem;
+}
+
+.settings-section {
+  padding: 0.5rem;
+  border: 1px dashed var(--stone-4);
+  border-radius: 0.25rem;
+  background: white;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-section > label {
+  display: block;
+  color: var(--gray-8);
+}
+
+.settings-section > input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-3);
+  border-radius: 0.25rem;
+}
+
 /* User list */
 
 ul.user-list {

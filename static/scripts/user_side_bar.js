@@ -70,6 +70,17 @@ function initUserSideBar() {
   document
     .querySelector(".create-user-section > button.create")
     .addEventListener("click", createUser);
+
+  document
+    .getElementById("meeting-length-input")
+    .addEventListener("change", (e) => {
+      const value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value <= 0) {
+        e.target.value = context.meeting_length_minutes;
+        return;
+      }
+      context.meeting_length_minutes = value;
+    });
 }
 
 export { initUserSideBar };

@@ -1,6 +1,10 @@
 <aside id="user-sidebar">
   <header><h1>Users</h1></header>
-
+  <div class="settings-section">
+    <label for="meeting-length-input">Meeting Length (in mintues)</label>
+    <input id="meeting-length-input" type="number" value="15" min="0" max="1440" step="5"/>
+  </div>
+  
   <div class="create-user-section">
     <label for="create-user-input">Add user</label>
     <input id="create-user-input" type="text" placeholder="Enter new user's name" />

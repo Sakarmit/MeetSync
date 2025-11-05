@@ -8,9 +8,10 @@ initializeSchedule();
 
 document.querySelector(SUBMIT_BUTTON_SELECTOR).addEventListener("click", async () => {
   const users = context.users;
+  const meeting_length_minutes = context.meeting_length_minutes;
 
   try {
-    const response = await submitAvailability(users);
+    const response = await submitAvailability(users, meeting_length_minutes);
     console.log("Server response:", response);
   } catch (error) {
     console.error("Error submitting availability:", error);
