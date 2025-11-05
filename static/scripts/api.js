@@ -9,7 +9,7 @@
  * @returns {Promise<Object>} - The response from the server.
  */
 async function submitAvailability(users, meeting_length_minutes) {
-  const availability = users.map((user) => ({ name: user.name, timeSlots: user.timeSlots }));
+  const availability = users.map((user) => ({ name: user.name, timeSlots: user.timeSlots, priority: user.priority }));
   const response = await fetch("/call-model", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

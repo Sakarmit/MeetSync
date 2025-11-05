@@ -24,17 +24,22 @@ main.main-content {
   font-size: 1.5rem;
 }
 
-.user-name-control {
+.user-control {
   margin-bottom: 1rem;
 }
 
-#user-name {
+.user-control > input {
   padding: 0.5rem;
   border: 1px solid var(--gray-3);
   border-radius: 0.25rem;
 }
 
-.user-name-control > button.save {
+#user-priority {
+  width: 5rem;
+  margin-left: 0.5rem;
+}
+
+.user-control > button.save {
   background: var(--blue-7);
   color: white;
   border: none;

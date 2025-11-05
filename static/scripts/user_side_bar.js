@@ -47,7 +47,7 @@ function createUser() {
   input.value = "";
   feedback.textContent = "User created successfully.";
 
-  eventBus.addUser({ id, name, timeSlots: [] });
+  eventBus.addUser({ id, name, timeSlots: [], priority: 1});
 }
 
 function initUserSideBar() {

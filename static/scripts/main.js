@@ -20,18 +20,22 @@ document.querySelector(SUBMIT_BUTTON_SELECTOR).addEventListener("click", async (
 });
 
 eventBus.addEventListener("selectedUser:selected", () => {
-  const input = document.getElementById("user-name");
+  const input_name = document.getElementById("user-name");
+  const input_priority = document.getElementById("user-priority");
   const selectedUser = context.users.find((u) => u.id === context.selectedUserId);
 
-  input.value = selectedUser.name;
+  input_name.value = selectedUser.name;
+  input_priority.value = selectedUser.priority;
 });
 
-const userNameControlSelector = ".main-content > header > .user-name-control";
-document.querySelector(userNameControlSelector + " > button.save").addEventListener("click", () => {
+const userControlSelector = ".main-content > header > .user-control";
+document.querySelector(userControlSelector + " > button.save").addEventListener("click", () => {
   const userNameInput = document.getElementById("user-name");
+  const userPriorityInput = document.getElementById("user-priority");
   const newName = userNameInput.value.trim();
+  const newPriority = parseInt(userPriorityInput.value.trim(), 10);
 
   if (newName) {
-    eventBus.updateSelectedUser({ name: newName });
+    eventBus.updateSelectedUser({ name: newName, priority: newPriority });
   }
 });

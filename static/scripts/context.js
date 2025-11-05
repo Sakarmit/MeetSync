@@ -8,7 +8,7 @@
  * @property {number} endMinute - Integer representing minutes since 00:00; should be greater than `startMinute`.
  */
 
-/** @typedef {{ id: Symbol, name: string, timeSlots: TimeSlot[] }} User */
+/** @typedef {{ id: Symbol, name: string, timeSlots: TimeSlot[], priority: number }} User */
 
 const context = {
   /** @type {User[]} */
