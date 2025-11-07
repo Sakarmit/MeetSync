@@ -85,9 +85,8 @@ function initUserSideBar() {
     listItem.querySelector(".name").textContent = context.users[idx].name;
   });
 
-  document
-    .querySelector(".create-user-section > button.create")
-    .addEventListener("click", createUser);
+  const createUserInput = document.querySelector(".create-user-section > button.create");
+  createUserInput.addEventListener("click", createUser);
 
   document.getElementById("meeting-length-input").addEventListener("change", (e) => {
     const value = parseInt(e.target.value, 10);
@@ -169,7 +168,9 @@ function importUsersFromArray(rawUsers, clearExisting = false) {
 function importUsersFromFile(file) {
   const clearExisting =
     context.users.length > 0
-      ? window.confirm("Replace existing users with imported users? Click OK to clear current users.")
+      ? window.confirm(
+          "Replace existing users with imported users? Click OK to clear current users."
+        )
       : false;
 
   const reader = new FileReader();

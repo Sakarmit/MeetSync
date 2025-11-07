@@ -35,13 +35,13 @@ function selectedSlotsToMap(selectedSlots) {
    */
   const map = new Map();
 
-  selectedSlots.forEach((el) => {
+  for (const el of selectedSlots) {
     const day = Number(el.dataset.day);
     const row = Number(el.dataset.row);
 
     if (!map.has(day)) map.set(day, []);
     map.get(day)?.push(row);
-  });
+  }
 
   map.forEach((rows) => rows.sort((a, b) => a - b));
 
