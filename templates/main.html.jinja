@@ -10,10 +10,12 @@
 {% block content %}
   {% include "users_side_bar.html.jinja" %}
 
-  <main class="main-content">
+  <main class="main-content no-user-selected ">
     <header>
-      <h1>MeetSync</h1>
-      <div class="user-name-control">
+      <div class="options-bar">
+        <h1>MeetSync</h1>
+      </div>
+      <div class="user-control">
         <label for="user-name">Name:</label>
         <input
           id="user-name"
@@ -21,10 +23,34 @@
           placeholder="Enter current user's name"
           required
         />
+        <label for="user-priority">Priority:</label>
+        <input
+          id="user-priority"
+          type="number"
+          placeholder="Enter current user's priority"
+          value="1"
+          min="0"
+          required
+        />
         <button class="save" type="button">Save</button>
       </div>
     </header>
 
     {% include "schedule.html.jinja" %}
+
+    <footer>
+      <div id="flash-messages">
+      <template>
+        <div class="alert alert-type">
+          <img class="alert-icon" src="{{ url_for('static', path='styles/images/type.png') }}" alt="Status icon" />
+          <div>
+            <strong>STATUS</strong>
+            <span>message</span>
+          </div>
+          <img class="alert-close" src="/static/styles/images/close.png" alt="Close" />
+        </div>
+      </template>
+    </div>
+    </footer>
   </main>
 {% endblock %}

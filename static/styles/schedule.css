@@ -82,19 +82,21 @@
   }
 }
 
-.availability-schedule > .toolbar {
+.availability-schedule > .controls {
   margin-top: 0.5rem;
+  display: flex !important;
+  justify-content: space-between;
 
-  > button {
+  button {
     background: var(--blue-7);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
+  }
 
-    &.submit {
-      background: var(--green-7);
-      float: right;
-    }
+  > .generate {
+    color: white;
+    background: var(--green-7);
   }
 }

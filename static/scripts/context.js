@@ -8,13 +8,15 @@
  * @property {number} endMinute - Integer representing minutes since 00:00; should be greater than `startMinute`.
  */
 
-/** @typedef {{ id: Symbol, name: string, timeSlots: TimeSlot[] }} User */
+/** @typedef {{ id: Symbol, name: string, timeSlots: TimeSlot[], priority: number }} User */
 
 const context = {
   /** @type {User[]} */
   users: [],
   /** @type {Symbol|null} */
   selectedUserId: null,
+  /** @type {number} */
+  meeting_length_minutes: 15,
 };
 
 class EventBus extends EventTarget {
@@ -59,6 +61,24 @@ class EventBus extends EventTarget {
     context.selectedUserId = id;
 
     this.dispatchEvent(new Event("selectedUser:selected"));
+  }
+
+  /**
+   * Delete a user from the context.
+   * @param {Symbol} id - ID of the user to delete.
+   */
+  deleteUser(id) {
+    const idx = context.users.findIndex((u) => u.id === id);
+    if (idx === -1) throw new Error("User ID not found in context.");
+
+    context.users.splice(idx, 1);
+
+    if (context.selectedUserId === id) {
+      context.selectedUserId = null;
+      this.dispatchEvent(new Event("selectedUser:updated"));
+    }
+
+    this.dispatchEvent(new Event("users:updated"));
   }
 }
 

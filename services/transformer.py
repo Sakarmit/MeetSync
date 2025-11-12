@@ -37,8 +37,9 @@ def _validate_frontend_payload(data: Dict[str, Any]) -> None:
     meeting_length = data.get("meeting_length_minutes", DEFAULT_MEETING_LENGTH_MINUTES)
     if not isinstance(meeting_length, int) or meeting_length <= 0:
         raise ValueError("meeting_length_minutes must be a positive integer")
-    if meeting_length % SLOT_MINUTES != 0:
-        raise ValueError(f"meeting_length_minutes must be a multiple of {SLOT_MINUTES}")
+    if meeting_length > (DAY_END_MIN - DAY_START_MIN):
+        raise ValueError(f"meeting_length_minutes cannot exceed the length of the day ({DAY_END_MIN - DAY_START_MIN} minutes)")
+    # if meeting_length % SLOT_MINUTES != 0:
 
     top_k = data.get("top_k", DEFAULT_TOP_K)
     if not isinstance(top_k, int) or top_k <= 0:

@@ -1,4 +1,5 @@
 import { context, eventBus } from "./context.js";
+import { flashMessage } from "./flash.js";
 
 /**
  * Handler for the `beforeunload` event to prompt the user about unsaved changes.
@@ -22,17 +23,29 @@ function createUserListItem(name, id) {
   itemElement
     .querySelector("button.select")
     .addEventListener("click", () => eventBus.selectUser(id));
+  itemElement.querySelector("img.delete").addEventListener("click", (e) => {
+    e.stopPropagation();
+    flashMessage(`User "${name}" deleted.`, "success");
+    e.target.parentElement.parentElement.remove();
+    if (context.users.length - 1 === 0) {
+      document.querySelector(".no-users-message").classList.remove("hidden");
+    }
+    eventBus.deleteUser(id);
+  });
 
   return itemElement;
 }
 
 function createUser() {
   const input = document.getElementById("create-user-input");
-  const feedback = document.getElementById("create-user-feedback");
-
   const name = input.value.trim();
   if (!name) {
-    feedback.textContent = "Please enter a name.";
+    flashMessage("User's name cannot be empty.", "error");
+    return;
+  }
+
+  if (context.users.find((u) => u.name === name)) {
+    flashMessage("User's name must be unique.", "error");
     return;
   }
 
@@ -45,9 +58,9 @@ function createUser() {
   document.querySelector("ul.user-list").appendChild(listItemHTML);
 
   input.value = "";
-  feedback.textContent = "User created successfully.";
+  flashMessage("User created successfully.", "success");
 
-  eventBus.addUser({ id, name, timeSlots: [] });
+  eventBus.addUser({ id, name, timeSlots: [], priority: 1 });
 }
 
 function initUserSideBar() {
@@ -60,6 +73,11 @@ function initUserSideBar() {
   });
 
   eventBus.addEventListener("selectedUser:updated", () => {
+    if (context.selectedUserId === null) {
+      document.querySelector(".main-content").classList.add("no-user-selected");
+      return;
+    }
+
     const idx = context.users.findIndex((u) => u.id === context.selectedUserId);
     const listItems = document.querySelectorAll("ul.user-list > li:not(.no-users-message)");
     const listItem = listItems[idx];
@@ -70,6 +88,15 @@ function initUserSideBar() {
   document
     .querySelector(".create-user-section > button.create")
     .addEventListener("click", createUser);
+
+  document.getElementById("meeting-length-input").addEventListener("change", (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (isNaN(value) || value <= 0) {
+      e.target.value = context.meeting_length_minutes;
+      return;
+    }
+    context.meeting_length_minutes = value;
+  });
 }
 
 export { initUserSideBar };

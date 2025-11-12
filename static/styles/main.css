@@ -13,6 +13,14 @@ button {
 }
 
 /* Main Content Styles */
+main.main-content.no-user-selected {
+  > header > .user-control {
+    display: none;
+  }
+  > .availability-schedule {
+    display: none;
+  }
+}
 
 /* Prevents sidebar from overlapping main content */
 main.main-content {
@@ -20,25 +28,105 @@ main.main-content {
   padding: 1rem;
 }
 
-.main-content > header > h1 {
-  font-size: 1.5rem;
+.main-content > header > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  > h1 {
+    font-size: 1.5rem;
+  }
 }
 
-.user-name-control {
+.user-control {
   margin-bottom: 1rem;
 }
 
-#user-name {
+.user-control > input {
   padding: 0.5rem;
   border: 1px solid var(--gray-3);
   border-radius: 0.25rem;
 }
 
-.user-name-control > button.save {
+#user-priority {
+  width: 5rem;
+  margin-left: 0.5rem;
+}
+
+.user-control > button.save {
   background: var(--blue-7);
   color: white;
   border: none;
   padding: 0.45rem 0.75rem;
   border-radius: 0.25rem;
   margin-left: 0.5rem;
+}
+
+/* Alert Styles */
+@keyframes alert-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+main.main-content .alert {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  padding: 1rem;
+  border: 0.15rem solid transparent;
+  border-radius: 0.25rem;
+  transition: opacity 0.5s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 50vw;
+  margin: 1.5rem;
+  transform: translateY(0);
+  opacity: 1;
+  animation: alert-slide-up 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+main.main-content .alert-success {
+  background-color: #d1e7dd;
+  border-color: #badbcc;
+  color: #0f5132;
+}
+
+main.main-content .alert-error {
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+  color: #842029;
+}
+
+main.main-content .alert img {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+main.main-content .alert span {
+  display: flex;
+}
+
+main.main-content .alert strong {
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+main.main-content .alert .alert-close {
+  opacity: 0.25;
+  transition: opacity 0.2s;
+  margin-left: auto;
+  cursor: pointer;
+  width: 0.75rem;
+  height: 0.75rem;
+
+  &:hover {
+    opacity: 1;
+  }
 }

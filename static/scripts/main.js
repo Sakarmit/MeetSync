@@ -1,36 +1,53 @@
 import { submitAvailability } from "./api.js";
 import { context, eventBus } from "./context.js";
 import { initUserSideBar } from "./user_side_bar.js";
-import { initializeSchedule, SUBMIT_BUTTON_SELECTOR } from "./schedule.js";
+import { initializeSchedule } from "./schedule.js";
+import { flashMessage } from "./flash.js";
 
 initUserSideBar();
 initializeSchedule();
 
-document.querySelector(SUBMIT_BUTTON_SELECTOR).addEventListener("click", async () => {
-  const users = context.users;
+document
+  .querySelector("main.main-content .availability-schedule div.controls button.generate")
+  .addEventListener("click", async () => {
+    const users = context.users;
+    const meeting_length_minutes = context.meeting_length_minutes;
 
-  try {
-    const response = await submitAvailability(users);
-    console.log("Server response:", response);
-  } catch (error) {
-    console.error("Error submitting availability:", error);
-    return;
-  }
-});
+    try {
+      const response = await submitAvailability(users, meeting_length_minutes);
+      flashMessage("Meeting suggestions generated!", "success");
+      console.log("Server response:", response); //TODO: Display response
+    } catch (error) {
+      flashMessage(error.detail, "error", error.status, error.message);
+      return;
+    }
+  });
 
 eventBus.addEventListener("selectedUser:selected", () => {
-  const input = document.getElementById("user-name");
+  document.querySelector(".main-content").classList.remove("no-user-selected");
+  const input_name = document.getElementById("user-name");
+  const input_priority = document.getElementById("user-priority");
   const selectedUser = context.users.find((u) => u.id === context.selectedUserId);
 
-  input.value = selectedUser.name;
+  input_name.value = selectedUser.name;
+  input_priority.value = selectedUser.priority;
 });
 
-const userNameControlSelector = ".main-content > header > .user-name-control";
-document.querySelector(userNameControlSelector + " > button.save").addEventListener("click", () => {
+const userControlSelector = ".main-content > header > .user-control";
+document.querySelector(userControlSelector + " > button.save").addEventListener("click", () => {
   const userNameInput = document.getElementById("user-name");
+  const userPriorityInput = document.getElementById("user-priority");
   const newName = userNameInput.value.trim();
+  const newPriority = parseInt(userPriorityInput.value.trim(), 10);
 
-  if (newName) {
-    eventBus.updateSelectedUser({ name: newName });
+  if (!newName) {
+    flashMessage("User's name cannot be empty.", "error");
+    return;
   }
+  if (isNaN(newPriority) || newPriority <= 0) {
+    flashMessage("Priority must be a positive integer.", "error");
+    return;
+  }
+  eventBus.updateSelectedUser({ name: newName, priority: newPriority });
+  flashMessage("User updated successfully.", "success");
 });
