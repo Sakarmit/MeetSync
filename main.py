@@ -8,7 +8,8 @@ from services.transformer import is_frontend_payload, transform_frontend_to_mode
 from templates import templates
 
 # NEW: simple file-based persistence for saving/loading scenarios
-import os, json
+import os
+import json
 
 app = FastAPI(title="MeetSync Backend", version="1.0.0")
 

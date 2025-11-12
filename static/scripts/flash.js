@@ -1,9 +1,8 @@
 /**
  * Display a flash message.
  * @param {string} msg
- * @param {'main'|'sidebar'} location
  * @param {'success'|'error'} type
- * @param {int} status
+ * @param {number} status
  * @param {string} errType
  */
 function flashMessage(msg = "No details", type = "success", status = "", errType = "") {
