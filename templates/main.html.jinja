@@ -14,7 +14,6 @@
     <header>
       <div class="options-bar">
         <h1>MeetSync</h1>
-        <button type="button" class="submit">Submit</button>
       </div>
       <div class="user-control">
         <label for="user-name">Name:</label>
@@ -38,5 +37,20 @@
     </header>
 
     {% include "schedule.html.jinja" %}
+
+    <footer>
+      <div id="flash-messages">
+      <template>
+        <div class="alert alert-type">
+          <img class="alert-icon" src="{{ url_for('static', path='styles/images/type.png') }}" alt="Status icon" />
+          <div>
+            <strong>STATUS</strong>
+            <span>message</span>
+          </div>
+          <img class="alert-close" src="/static/styles/images/close.png" alt="Close" />
+        </div>
+      </template>
+    </div>
+    </footer>
   </main>
 {% endblock %}

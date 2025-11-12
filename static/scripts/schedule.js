@@ -1,5 +1,6 @@
 import { context, eventBus } from "./context.js";
 import { compressSelectedSlots, decompressTimeSlots } from "./schedule/schedule-util.js";
+import { flashMessage } from "./flash.js";
 
 /** @import { TimeSlot, User } from './context.js' */
 
@@ -79,6 +80,7 @@ function initializeSchedule() {
     const selectedSlots = slots.querySelectorAll(".slot.selected");
     const timeSlots = compressSelectedSlots(selectedSlots);
 
+    flashMessage("Schedule saved successfully.", "success");
     eventBus.updateSelectedUser({ timeSlots });
   });
 }

@@ -2,22 +2,26 @@ import { submitAvailability } from "./api.js";
 import { context, eventBus } from "./context.js";
 import { initUserSideBar } from "./user_side_bar.js";
 import { initializeSchedule } from "./schedule.js";
+import { flashMessage } from "./flash.js";
 
 initUserSideBar();
 initializeSchedule();
 
-document.querySelector("main.main-content header div.options-bar button.submit").addEventListener("click", async () => {
-  const users = context.users;
-  const meeting_length_minutes = context.meeting_length_minutes;
+document
+  .querySelector("main.main-content .availability-schedule div.controls button.generate")
+  .addEventListener("click", async () => {
+    const users = context.users;
+    const meeting_length_minutes = context.meeting_length_minutes;
 
-  try {
-    const response = await submitAvailability(users, meeting_length_minutes);
-    console.log("Server response:", response);
-  } catch (error) {
-    console.error("Error submitting availability:", error);
-    return;
-  }
-});
+    try {
+      const response = await submitAvailability(users, meeting_length_minutes);
+      flashMessage("Meeting suggestions generated!", "success");
+      console.log("Server response:", response); //TODO: Display response
+    } catch (error) {
+      flashMessage(error.detail, "error", error.status, error.message);
+      return;
+    }
+  });
 
 eventBus.addEventListener("selectedUser:selected", () => {
   document.querySelector(".main-content").classList.remove("no-user-selected");
@@ -36,7 +40,14 @@ document.querySelector(userControlSelector + " > button.save").addEventListener(
   const newName = userNameInput.value.trim();
   const newPriority = parseInt(userPriorityInput.value.trim(), 10);
 
-  if (newName) {
-    eventBus.updateSelectedUser({ name: newName, priority: newPriority });
+  if (!newName) {
+    flashMessage("User's name cannot be empty.", "error");
+    return;
   }
+  if (isNaN(newPriority) || newPriority <= 0) {
+    flashMessage("Priority must be a positive integer.", "error");
+    return;
+  }
+  eventBus.updateSelectedUser({ name: newName, priority: newPriority });
+  flashMessage("User updated successfully.", "success");
 });
