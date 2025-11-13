@@ -75,7 +75,7 @@ main.main-content {
   }
 }
 
-main.main-content .alert {
+.alert {
   position: fixed;
   left: 0;
   bottom: 0;
@@ -93,33 +93,33 @@ main.main-content .alert {
   animation: alert-slide-up 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-main.main-content .alert-success {
+.alert-success {
   background-color: #d1e7dd;
   border-color: #badbcc;
   color: #0f5132;
 }
 
-main.main-content .alert-error {
+.alert-error {
   background-color: #f8d7da;
   border-color: #f5c2c7;
   color: #842029;
 }
 
-main.main-content .alert img {
+.alert img {
   width: 1.5rem;
   height: 1.5rem;
 }
 
-main.main-content .alert span {
+.alert span {
   display: flex;
 }
 
-main.main-content .alert strong {
+.alert strong {
   font-size: 1.1rem;
   letter-spacing: 0.5px;
 }
 
-main.main-content .alert .alert-close {
+.alert .alert-close {
   opacity: 0.25;
   transition: opacity 0.2s;
   margin-left: auto;
