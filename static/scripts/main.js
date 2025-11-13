@@ -7,9 +7,6 @@ import { flashMessage } from "./flash.js";
 initUserSideBar();
 initializeSchedule();
 
-// Keep track of the most recent backend response (for export if needed)
-let lastResponse = null;
-
 /**
  * OPTIONAL PART:
  * Exported entire context.users array as JSON and download it.
@@ -79,19 +76,19 @@ function importUsersFromArray(importedUsers) {
   flashMessage("Users imported.", "success");
 }
 
-// === EXISTING UI WIRING (unchanged except storing lastResponse) ===
-
 document
-  .querySelector(
-    "main.main-content .availability-schedule div.controls button.generate"
-  )
+  .querySelector("main.main-content header div.header-bar button.generate")
   .addEventListener("click", async () => {
     const users = context.users;
     const meeting_length_minutes = context.meeting_length_minutes;
 
+    if (users.length === 0) {
+      flashMessage("No users to generate meeting for.", "error");
+      return;
+    }
+
     try {
       const response = await submitAvailability(users, meeting_length_minutes);
-      lastResponse = response; // store last backend response
 
       flashMessage("Meeting suggestions generated!", "success");
       

@@ -1,7 +1,6 @@
 @import "./variables.css";
 @import "./user-side-bar.css";
 @import "./schedule.css";
-@import "./results.css";
 
 /* Global Styles */
 
@@ -36,6 +35,14 @@ main.main-content {
   margin-bottom: 1rem;
   > h1 {
     font-size: 1.5rem;
+  }
+
+  > .generate {
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background: var(--green-7);
   }
 }
 
