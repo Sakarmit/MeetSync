@@ -15,6 +15,8 @@ DEFAULT_HARD_BLOCK = False
 def _validate_time_slot(ts: Dict[str, Any]) -> None:
     if not all(isinstance(ts[k], int) for k in ("day", "startMinute", "endMinute")):
         raise ValueError("day, startMinute, and endMinute must be integers")
+    if "availabilityType" not in ts:
+        raise ValueError("availabilityType is required in TimeSlot")
 
     day = ts["day"]
     start = ts["startMinute"]
@@ -28,6 +30,9 @@ def _validate_time_slot(ts: Dict[str, Any]) -> None:
         raise ValueError(f"TimeSlot bounds must be within {DAY_START_MIN}:00-{DAY_END_MIN}:00 and start < end")
     if (start - DAY_START_MIN) % SLOT_MINUTES != 0 or (end - DAY_START_MIN) % SLOT_MINUTES != 0:
         raise ValueError(f"Times must follow increments of {SLOT_MINUTES} minutes")
+
+    if ts["availabilityType"] not in ("busy", "tentative"):
+        raise ValueError("availabilityType must be either 'busy' or 'tentative'. 'available' slots should be omitted")
 
 def _validate_frontend_payload(data: Dict[str, Any]) -> None:
     availability = data.get("availability", [])
@@ -116,8 +121,14 @@ def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
             day = int(ts["day"])
             start_row = int((int(ts["startMinute"]) - DAY_START_MIN) / SLOT_MINUTES)
             end_row = int((int(ts["endMinute"]) - DAY_START_MIN) / SLOT_MINUTES)
+            availability_type = ts["availabilityType"]
             for r in range(start_row, end_row):
-                matrix[day][r] = 0
+                match availability_type:
+                    case "busy":
+                        availability_type_int = 0
+                    case "tentative":
+                        availability_type_int = 1
+                matrix[day][r] = availability_type_int
 
         attendees.append({
             "name": user.get("name"),
