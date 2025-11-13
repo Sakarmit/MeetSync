@@ -1,4 +1,4 @@
-import { context, eventBus } from "./context.js";
+import { context, eventBus, exportUsersData, importUsersData } from "./context.js";
 import { flashMessage } from "./flash.js";
 
 /**
@@ -99,4 +99,91 @@ function initUserSideBar() {
   });
 }
 
-export { initUserSideBar };
+/**
+ * Download current users as a JSON file.
+ */
+function exportUsersToFile(filename = "meetsync-users.json") {
+  const data = exportUsersData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json;charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Import users from a parsed array and optionally clear existing users.
+ * @param {{ name: string, priority?: number, timeSlots?: any[] }[]} rawUsers
+ * @param {boolean} clearExisting
+ */
+function importUsersFromArray(rawUsers, clearExisting = false) {
+  if (!Array.isArray(rawUsers)) {
+    flashMessage("Imported data is not an array of users.", "error");
+    return;
+  }
+
+  if (clearExisting) {
+    // Clear context users & selection
+    context.users.length = 0;
+    context.selectedUserId = null;
+
+    // Remove all user list items except the "no users" message
+    document
+      .querySelectorAll("ul.user-list > li:not(.no-users-message)")
+      .forEach((v) => v.remove());
+
+    const msg = document.querySelector(".no-users-message");
+    if (msg) msg.classList.remove("hidden");
+
+    eventBus.dispatchEvent(new Event("users:updated"));
+  }
+
+  const preparedUsers = importUsersData(rawUsers);
+
+  const list = document.querySelector("ul.user-list");
+  const noUsersMsg = document.querySelector(".no-users-message");
+  if (noUsersMsg) {
+    noUsersMsg.classList.add("hidden");
+  }
+
+  preparedUsers.forEach((user) => {
+    const listItemHTML = createUserListItem(user.name, user.id);
+    list.appendChild(listItemHTML);
+    eventBus.addUser(user);
+  });
+
+  flashMessage(`Imported ${preparedUsers.length} user(s).`, "success");
+}
+
+/**
+ * Import users from a JSON file chosen via <input type="file">.
+ * Prompts whether to clear existing users if any are present.
+ * @param {File} file
+ */
+function importUsersFromFile(file) {
+  const clearExisting =
+    context.users.length > 0
+      ? window.confirm("Replace existing users with imported users? Click OK to clear current users.")
+      : false;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const text = String(e.target.result || "");
+      const raw = JSON.parse(text);
+      importUsersFromArray(raw, clearExisting);
+    } catch (err) {
+      console.error(err);
+      flashMessage("Failed to read imported users file.", "error");
+    }
+  };
+  reader.readAsText(file);
+}
+
+export { initUserSideBar, exportUsersToFile, importUsersFromArray, importUsersFromFile };

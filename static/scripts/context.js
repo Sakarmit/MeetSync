@@ -84,4 +84,33 @@ class EventBus extends EventTarget {
 
 const eventBus = new EventBus();
 
-export { context, eventBus };
+/**
+ * Return a JSON-safe snapshot of all users.
+ * @returns {{ name: string, priority: number, timeSlots: TimeSlot[] }[]}
+ */
+function exportUsersData() {
+  return context.users.map((u) => ({
+    name: u.name,
+    priority: u.priority,
+    timeSlots: Array.isArray(u.timeSlots) ? u.timeSlots : [],
+  }));
+}
+
+/**
+ * Convert JSON-safe user data back into full User objects with new Symbol IDs.
+ * @param {{ name: string, priority?: number, timeSlots?: TimeSlot[] }[]} data
+ * @returns {User[]}
+ */
+function importUsersData(data) {
+  if (!Array.isArray(data)) {
+    throw new Error("importUsersData expected an array");
+  }
+  return data.map((u) => ({
+    id: Symbol(`User:${u.name}`),
+    name: String(u.name ?? "").trim() || "Unnamed",
+    priority: typeof u.priority === "number" && u.priority > 0 ? u.priority : 1,
+    timeSlots: Array.isArray(u.timeSlots) ? u.timeSlots : [],
+  }));
+}
+
+export { context, eventBus, exportUsersData, importUsersData };
