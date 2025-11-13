@@ -1,0 +1,137 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    main {
+        width: 80%;
+    }
+}
+
+header {
+    text-align: center;
+    h1 {
+        margin-bottom: 0;
+    }
+}
+
+button.export {
+  margin-left: auto;
+  background: var(--blue-7);
+  color: white;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.row-one {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    margin: 0;
+    padding: 0;
+
+    li {
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+    }
+
+    .date-time {
+        font-weight: bold;
+        margin-bottom: 8px;
+        font-size: larger;
+        align-content: center;
+    }
+
+    .coverage, .score{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .coverage-value {
+        display: flex;
+        flex-direction: row;
+        font-size: 14px;
+        padding: 4px;
+        width: fit-content;
+
+        color: black;
+
+        &.green {
+            background-color: #33ff3333;
+            border: 1px solid green;
+        }
+
+        &.orange {
+            background-color: #ffff3333;
+            border: 1px solid orange;
+        }
+
+        &.red {
+            background-color: #ff333333;
+            border: 1px solid red;
+        }
+    }
+
+    .scores {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .score-value {
+        font-size: 14px;
+        padding: 4px;
+        width: fit-content;
+        background-color: #e0e0e0;
+        border: 1px solid #b0b0b0;
+    }
+
+    .divider {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        hr {
+            flex-grow: 1;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+    }
+
+    .conflict-values {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap : 8px;
+        color: black;
+        flex-wrap: wrap;
+        li {
+            padding: 4px;
+            background-color: #ff333333;
+            border: 1px solid red;
+        }
+        li.none {
+            background-color: transparent;
+            border: none;
+        }
+    }
+}
