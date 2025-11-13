@@ -1,6 +1,9 @@
-//@ts-check
+// @ts-check
 
-/** @import { TimeSlot } from '../context.js' */
+/** @import { AvailabilityType, TimeSlot } from '../context.js' */
+
+/** @typedef {{ rowIdx: number, availabilityType: AvailabilityType }} TimeSlotRow */
+/** @typedef {{ start: number, end: number, availabilityType: AvailabilityType }} ContiguousBlock */
 
 const SLOT_MINUTES = 15; // Each slot represents 15 minutes
 const DAY_START_MIN = 9 * 60; // Row 0 is 09:00
@@ -24,60 +27,72 @@ function rowFromMinute(minute) {
 }
 
 /**
- * Convert selected slot elements to a map of day to sorted row indices.
+ * Convert selected slot elements to a map of day to sorted TimeSlotRows.
  * @param {NodeListOf<HTMLElement>} selectedSlots
- * @returns {Map<number, number[]>} - Map where keys are day indices and values are sorted arrays of row indices.
+ * @returns {Map<number, TimeSlotRow[]>} - Map where keys are day indices and values are sorted arrays of TimeSlotRows.
  */
 function selectedSlotsToMap(selectedSlots) {
-  /**
-   * Gather per day rows
-   * @type {Map<number, number[]>}
-   */
+  /** @type {Map<number, TimeSlotRow[]>} */
   const map = new Map();
 
   for (const el of selectedSlots) {
-    const day = Number(el.dataset.day);
-    const row = Number(el.dataset.row);
+    if (el.dataset.day === undefined || el.dataset.row === undefined) {
+      throw new Error("Selected slot element is missing required data attributes.");
+    }
+
+    const day = parseInt(el.dataset.day, 10);
+    const rowIdx = parseInt(el.dataset.row, 10);
+
+    /** @type {AvailabilityType} */
+    let availabilityType;
+    if (el.classList.contains("selected")) {
+      availabilityType = "busy";
+    } else if (el.classList.contains("selected-tentative")) {
+      availabilityType = "tentative";
+    } else {
+      throw new Error("Selected slot element has no or unknown availability class.");
+    }
 
     if (!map.has(day)) map.set(day, []);
-    map.get(day)?.push(row);
+    map.get(day)?.push({ rowIdx, availabilityType });
   }
 
-  map.forEach((rows) => rows.sort((a, b) => a - b));
+  map.forEach((rows) => rows.sort((a, b) => a.rowIdx - b.rowIdx));
 
   return map;
 }
 
 /**
- * Form contiguous blocks from sorted rows.
- * @param {number[]} rows - Sorted array of row indices.
- * @returns {Array<{ start: number; end: number }>} - Array of contiguous blocks.
+ * Form contiguous blocks from sorted TimeSlotRows.
+ * @param {TimeSlotRow[]} rows - Sorted array of TimeSlotRows.
+ * @returns {ContiguousBlock[]}
  */
 function formContiguousBlocks(rows) {
-  /** @type {Array<{ start: number; end: number }>} */
-  const blocks = [];
-  let start = null;
-  let prev = null;
+  if (rows.length === 0) return [];
 
-  for (const row of rows) {
-    if (start === null) {
-      start = row;
-      prev = row;
-    } else if (prev !== null && row === prev + 1) {
-      prev = row;
-    } else if (prev !== null) {
-      blocks.push({ start, end: prev });
-      start = row;
-      prev = row;
+  /** @type {ContiguousBlock[]} */
+  const blocks = [];
+  /** @type {ContiguousBlock} */
+  let current = {
+    start: rows[0].rowIdx,
+    end: rows[0].rowIdx,
+    availabilityType: rows[0].availabilityType,
+  };
+
+  for (let i = 1; i < rows.length; i++) {
+    const { rowIdx, availabilityType } = rows[i];
+
+    // Extend block if current row continues it. Else close current block and start a new one.
+    if (rowIdx === current.end + 1 && availabilityType === current.availabilityType) {
+      current.end = rowIdx;
     } else {
-      throw new Error("Unreachable state");
+      blocks.push(current);
+      current = { start: rowIdx, end: rowIdx, availabilityType };
     }
   }
-  if (start !== null && prev !== null) {
-    blocks.push({ start, end: prev });
-  } else {
-    throw new Error("Unreachable state");
-  }
+
+  // Close final block
+  blocks.push(current);
 
   return blocks;
 }
@@ -98,11 +113,11 @@ function compressSelectedSlots(selectedSlots) {
     for (const block of blocks) {
       const startMinute = minuteFromRow(block.start);
       const endMinute = minuteFromRow(block.end + 1);
-      timeSlots.push({ day, startMinute, endMinute });
+      const availabilityType = block.availabilityType;
+      timeSlots.push({ day, startMinute, endMinute, availabilityType });
     }
   }
 
-  // Sort timeSlots by day and startMinute
   return timeSlots.sort((a, b) => {
     if (a.day !== b.day) return a.day - b.day;
     return a.startMinute - b.startMinute;
@@ -112,21 +127,44 @@ function compressSelectedSlots(selectedSlots) {
 /**
  * Decompress TimeSlots into individual slot elements.
  * @param {TimeSlot[]} timeSlots - Array of TimeSlot objects.
- * @returns {Array<{ day: number; row: number }>} - Array of individual slot representations.
+ * @returns {Array<{ day: number, row: number, availabilityType: AvailabilityType }>} - Array of individual slot representations.
  */
 function decompressTimeSlots(timeSlots) {
-  /** @type {Array<{ day: number; row: number }>} */
+  /** @type {Array<{ day: number, row: number, availabilityType: AvailabilityType }>} */
   const slots = [];
 
-  for (const { day, startMinute, endMinute } of timeSlots) {
+  for (const { day, startMinute, endMinute, availabilityType } of timeSlots) {
     const startRow = rowFromMinute(startMinute);
     const endRow = rowFromMinute(endMinute);
-    for (let r = startRow; r < endRow; r++) {
-      slots.push({ day, row: r });
+    for (let row = startRow; row < endRow; row++) {
+      slots.push({ day, row, availabilityType });
     }
   }
 
   return slots;
 }
 
-export { compressSelectedSlots, decompressTimeSlots };
+/**
+ * Set the availability type of the selected slot
+ * @param {HTMLElement} slotEl - The slot element to set the availability type for.
+ * @param {AvailabilityType} availabilityType - The availability type to set.
+ */
+function paintAvailabilitySlot(slotEl, availabilityType) {
+  switch (availabilityType) {
+    case "busy":
+      slotEl.classList.add("selected");
+      slotEl.classList.remove("selected-tentative");
+      break;
+    case "tentative":
+      slotEl.classList.add("selected-tentative");
+      slotEl.classList.remove("selected");
+      break;
+    case "available":
+      slotEl.classList.remove("selected", "selected-tentative");
+      break;
+    default:
+      throw new Error(`Unreachable: Unknown availability type ${availabilityType}`);
+  }
+}
+
+export { compressSelectedSlots, decompressTimeSlots, paintAvailabilitySlot };

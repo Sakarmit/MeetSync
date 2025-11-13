@@ -1,11 +1,14 @@
 //@ts-check
 
+/** @typedef {"busy" | "tentative" | "available"} AvailabilityType */
+
 /**
  * A time slot representing a busy period within a single day.
  * @typedef {Object} TimeSlot
  * @property {number} day - Day of the week. Integer from 0 (Monday) to 4 (Friday).
  * @property {number} startMinute - Integer representing minutes since 00:00.
  * @property {number} endMinute - Integer representing minutes since 00:00; should be greater than `startMinute`.
+ * @property {AvailabilityType} availabilityType - Type of availability for the time slot.
  */
 
 /** @typedef {{ id: Symbol, name: string, timeSlots: TimeSlot[], priority: number }} User */

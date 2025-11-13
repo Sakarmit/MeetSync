@@ -1,8 +1,19 @@
 import { context, eventBus } from "./context.js";
-import { compressSelectedSlots, decompressTimeSlots } from "./schedule/schedule-util.js";
+import {
+  compressSelectedSlots,
+  decompressTimeSlots,
+  paintAvailabilitySlot,
+} from "./schedule/schedule-util.js";
 import { flashMessage } from "./flash.js";
 
-/** @import { TimeSlot, User } from './context.js' */
+/** @import { AvailabilityType, TimeSlot, User } from './context.js' */
+
+function clearSlots() {
+  document
+    .querySelector(".availability-schedule .slots")
+    .querySelectorAll(".slot.selected, .slot.selected-tentative")
+    .forEach((s) => s.classList.remove("selected", "selected-tentative"));
+}
 
 /**
  * Load schedule data into the UI.
@@ -10,13 +21,13 @@ import { flashMessage } from "./flash.js";
  */
 function loadScheduleData(timeSlots) {
   const slots = document.querySelector(".availability-schedule .slots");
-  slots.querySelectorAll(".slot.selected").forEach((s) => s.classList.remove("selected"));
+  clearSlots();
 
   const individualSlots = decompressTimeSlots(timeSlots);
-  individualSlots.forEach(({ day, row }) => {
+  individualSlots.forEach(({ day, row, availabilityType }) => {
     const slotEl = slots.querySelector(`.slot[data-day='${day}'][data-row='${row}']`);
     if (slotEl) {
-      slotEl.classList.add("selected");
+      paintAvailabilitySlot(slotEl, availabilityType);
     } else {
       throw new Error(`Slot element not found for day ${day}, row ${row}`);
     }
@@ -34,20 +45,15 @@ function initializeSchedule() {
   const slots = document.querySelector(".availability-schedule .slots");
 
   let isPainting = false;
-  /** Paint to true = select, false = deselect */
-  let paintColor = true;
-
-  // Helper Functions
-  const setSel = (el, on) => el.classList.toggle("selected", on);
-  const isSel = (el) => el.classList.contains("selected");
+  /** @type {AvailabilityType} */
+  let paintColor = "busy";
 
   slots.addEventListener("mousedown", (e) => {
     const cell = e.target.closest(".slot");
     if (!cell) return;
 
     isPainting = true;
-    paintColor = !isSel(cell);
-    setSel(cell, paintColor);
+    paintAvailabilitySlot(cell, paintColor);
 
     // Prevent drag selection
     e.preventDefault();
@@ -60,7 +66,7 @@ function initializeSchedule() {
     const cell = hit?.closest(".slot");
     if (!cell) return;
 
-    setSel(cell, paintColor);
+    paintAvailabilitySlot(cell, paintColor);
   });
 
   function endPaint() {
@@ -72,16 +78,22 @@ function initializeSchedule() {
   window.addEventListener("blur", endPaint); // Stop painting if window loses focus
 
   const clearButtonSelector = ".availability-schedule button.clear";
-  document.querySelector(clearButtonSelector).addEventListener("click", () => {
-    slots.querySelectorAll(".slot.selected").forEach((s) => s.classList.remove("selected"));
-  });
+  document.querySelector(clearButtonSelector).addEventListener("click", clearSlots);
 
   document.querySelector(".availability-schedule button.save").addEventListener("click", () => {
-    const selectedSlots = slots.querySelectorAll(".slot.selected");
+    const selectedSlots = slots.querySelectorAll(".slot.selected, .slot.selected-tentative");
     const timeSlots = compressSelectedSlots(selectedSlots);
 
     flashMessage("Schedule saved successfully.", "success");
     eventBus.updateSelectedUser({ timeSlots });
+  });
+
+  const availabilitySelectors = document.querySelector(".schedule-container > .selectors");
+  availabilitySelectors.addEventListener("click", (ev) => {
+    const selectorEl = ev.target.closest(".selector");
+    if (!selectorEl || !availabilitySelectors.contains(selectorEl)) return;
+
+    paintColor = selectorEl.dataset.type;
   });
 }
 
