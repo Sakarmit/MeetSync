@@ -1,16 +1,14 @@
-from fastapi import FastAPI, Request, HTTPException, Body
+import json
+import os
+
+from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from model import model
 from models.front_end_models import FrontEndPayload
-from services.transformer import transform_frontend_to_model_payload
+from services.transformer import transform_frontend_payload_to_model_data
 from templates import templates
-
-# NEW: simple file-based persistence for saving/loading scenarios
-import os
-import json
 
 app = FastAPI(title="MeetSync Backend", version="1.0.0")
 
@@ -35,11 +33,11 @@ def health():
 
 
 @app.post("/call-model", response_class=JSONResponse)
-async def call_model(data: FrontEndPayload):
-    payload = transform_frontend_to_model_payload(data)
+async def call_model(payload: FrontEndPayload):
+    data = transform_frontend_payload_to_model_data(payload)
 
     try:
-        result = model(payload)
+        result = model(data)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
