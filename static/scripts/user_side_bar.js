@@ -85,7 +85,7 @@ function initUserSideBar() {
     listItem.querySelector(".name").textContent = context.users[idx].name;
   });
 
-  const createUserInput = document.querySelector(".create-user-section > button.create");
+  const createUserInput = document.querySelector(".create-user-section > .user-buttons > button.create");
   createUserInput.addEventListener("click", createUser);
 
   document.getElementById("meeting-length-input").addEventListener("change", (e) => {
@@ -115,6 +115,10 @@ function exportUsersToFile(filename = "meetsync-users.json") {
   a.remove();
   URL.revokeObjectURL(url);
 }
+
+document.getElementById("export-users").addEventListener("click", () => {
+  exportUsersToFile();
+});
 
 /**
  * Import users from a parsed array and optionally clear existing users.
@@ -169,7 +173,7 @@ function importUsersFromFile(file) {
   const clearExisting =
     context.users.length > 0
       ? window.confirm(
-          "Replace existing users with imported users? Click OK to clear current users."
+          "Delete users already in list? \nClick OK to clear all before importing. \nClick Cancel to keep existing users.",
         )
       : false;
 
@@ -187,4 +191,22 @@ function importUsersFromFile(file) {
   reader.readAsText(file);
 }
 
-export { initUserSideBar, exportUsersToFile, importUsersFromArray, importUsersFromFile };
+document.getElementById("import-users").addEventListener("click", (e) => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "application/json";
+  fileInput.style.display = "none";
+
+  fileInput.addEventListener("change", (event) => {
+    const target = event.target;
+    if (target.files && target.files.length > 0) {
+      importUsersFromFile(target.files[0]);
+    }
+  });
+
+  document.body.appendChild(fileInput);
+  fileInput.click();
+  document.body.removeChild(fileInput);
+});
+
+export { initUserSideBar };

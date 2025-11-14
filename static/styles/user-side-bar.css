@@ -13,7 +13,7 @@
   > header {
     margin-bottom: 0.5rem;
   }
-  > header > h1 {
+  > h1 {
     font-size: 1.25rem;
     font-weight: var(--font-weight-6);
   }
@@ -49,13 +49,25 @@
   border-radius: 0.25rem;
 }
 
-.create-user-section > button.create {
-  margin-left: auto;
-  background: var(--blue-7);
-  color: white;
-  border: none;
-  padding: 0.45rem 0.75rem;
-  border-radius: 0.25rem;
+.create-user-section {
+  
+  > .user-buttons {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    > img {
+      height: 2rem;
+    }
+    > button.create {
+      margin-left: auto;
+      background: var(--blue-7);
+      color: white;
+      border: none;
+      padding: 0.45rem 0.75rem;
+      border-radius: 0.25rem;
+    }
+  }
 }
 
 /* Settings Section */
