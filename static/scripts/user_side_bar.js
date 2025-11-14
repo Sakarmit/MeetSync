@@ -25,6 +25,14 @@ function createUserListItem(name, id) {
     .addEventListener("click", () => eventBus.selectUser(id));
   itemElement.querySelector("img.delete").addEventListener("click", (e) => {
     e.stopPropagation();
+    
+    if (document.getElementById("confirm-deletion").checked) {
+      let confirmDelete = window.confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`);
+      if (!confirmDelete) {
+        return;
+      }
+    }
+
     flashMessage(`User "${name}" deleted.`, "success");
     e.target.parentElement.parentElement.remove();
     if (context.users.length - 1 === 0) {
