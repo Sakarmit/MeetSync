@@ -8,6 +8,9 @@
   --cell-fill-outline-tentative: rgb(255, 165, 0); /* selection outline/focus */
   --cell-fill-available: white;
   --row-header-w: 68px;
+
+  /* Approx. total space outside the schedule (headers/toolbars/controls) */
+  --external-vertical-space: 20rem;
 }
 
 .availability-schedule {
@@ -50,14 +53,13 @@
 .schedule-container > .body {
   display: grid;
   grid-template-columns: var(--row-header-w) 1fr;
-  max-height: 32.5rem;
+  max-height: calc(100vh - var(--external-vertical-space));
   width: fit-content;
   overflow: auto;
 }
 
 .schedule-container > .body > .times {
   display: grid;
-  grid-template-rows: repeat(8, calc(var(--cell-h) * 4));
   position: sticky;
   left: 0;
   background: white;

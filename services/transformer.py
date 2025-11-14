@@ -2,8 +2,8 @@ from typing import Any, Dict, List
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 SLOT_MINUTES = 15
-DAY_START_MIN = 9 * 60
-DAY_END_MIN = 17 * 60
+DAY_START_MIN = 0 * 60
+DAY_END_MIN = 24 * 60
 SLOTS_PER_DAY = int((DAY_END_MIN - DAY_START_MIN) / SLOT_MINUTES)
 
 DEFAULT_MEETING_LENGTH_MINUTES = 60

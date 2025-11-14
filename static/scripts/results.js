@@ -1,6 +1,6 @@
 import { flashMessage } from "./flash.js";
 
-const DAY_START_MINUTES = 9 * 60; // 9:00 AM
+const DAY_START_MINUTES = 0 * 60; // 00:00
 
 window.addEventListener("message", (event) => {
     // Verify the origin of the message
