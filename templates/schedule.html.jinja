@@ -9,17 +9,16 @@
   <div class="schedule-container">
     <div class="body">
       <div class="times">
-        {# Only show 9:00–17:00 hour labels (9..=16) #}
-        {% for h in range(9,17) %}
+        {% for h in range(24) %}
           <div class="label">{{ "%02d:00" % h }}</div>
         {% endfor %}
       </div>
       <div class="slots">
-        {# 8 hours × 4 rows/hour = 32 rows; 5 days #}
-        {% for r in range(0,32) %}
-          {% for d in range(0,5) %}
-            {# Compute absolute minutes = r*15 + 9*60 for aria label #}
-            {% set abs_min = r * 15 + 9 * 60 %}
+        {# 24 hours * 4 rows/hour; 5 days #}
+        {% for r in range(24 * 4) %}
+          {% for d in range(5) %}
+            {# Compute absolute minutes = r*15 for aria-label #}
+            {% set abs_min = r * 15 %}
             {% set hour = (abs_min // 60) %}
             {% set minute = abs_min % 60 %}
             <div

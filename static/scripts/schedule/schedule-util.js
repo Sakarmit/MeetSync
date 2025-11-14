@@ -6,7 +6,7 @@
 /** @typedef {{ start: number, end: number, availabilityType: AvailabilityType }} ContiguousBlock */
 
 const SLOT_MINUTES = 15; // Each slot represents 15 minutes
-const DAY_START_MIN = 9 * 60; // Row 0 is 09:00
+const DAY_START_MIN = 0 * 60; // Row 0 represents 00:00
 
 /**
  * Convert a row index to the corresponding minute of the day.
