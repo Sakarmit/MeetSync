@@ -25,15 +25,14 @@ class Attendee:
 
 @dataclass
 class Weights:
-    avail_scores: dict[str, int | float]
-    unpreferred_penalty_per_person: int | float
+    avail_scores: dict[int, float]
+    unpreferred_penalty_per_person: float
     hard_block_for_high_priority: bool
 
     @classmethod
     def from_frontend_weights(cls, weights: FrontEndWeights) -> Weights:
-        avail_scores = {str(k): v for k, v in weights.avail_scores.items()}
         return cls(
-            avail_scores=avail_scores,
+            avail_scores=weights.avail_scores,
             unpreferred_penalty_per_person=weights.unpreferred_penalty_per_person,
             hard_block_for_high_priority=weights.hard_block_for_high_priority,
         )

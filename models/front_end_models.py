@@ -20,7 +20,7 @@ SLOT_MINUTES = 15
 
 DEFAULT_MEETING_LENGTH_MINUTES = 60
 DEFAULT_TOP_K = 5
-DEFAULT_AVAIL_SCORES = {"2": 1.0, "1": 0.5, "0": 0.0}
+DEFAULT_AVAIL_SCORES = {2: 1.0, 1: 0.5, 0: 0.0}
 DEFAULT_UNPREFERRED_PENALTY = 0.1
 DEFAULT_HARD_BLOCK = False
 
@@ -75,28 +75,13 @@ class AvailabilityUser(AppModel):
 
 class Weights(AppModel):
     avail_scores: Annotated[
-        dict[int | str, int | float],
+        dict[int, float],
         Field(default_factory=lambda: DEFAULT_AVAIL_SCORES.copy()),
     ]
     unpreferred_penalty_per_person: Annotated[
-        int | float, Field(default=DEFAULT_UNPREFERRED_PENALTY)
+        float, Field(default=DEFAULT_UNPREFERRED_PENALTY)
     ]
     hard_block_for_high_priority: Annotated[bool, Field(default=DEFAULT_HARD_BLOCK)]
-
-    @field_validator("avail_scores")
-    @classmethod
-    def validate_avail_scores(
-        cls, value: dict[int | str, int | float]
-    ) -> dict[int | str, int | float]:
-        for k in value.keys():
-            try:
-                int(k)
-            except Exception:
-                raise ValueError(
-                    "avail_scores keys must be integers or stringified integers"
-                )
-
-        return value
 
 
 class FrontEndPayload(AppModel):
