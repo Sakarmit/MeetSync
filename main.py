@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from model import model
-from services.transformer import is_frontend_payload, transform_frontend_to_model_payload
+from models.front_end_models import FrontEndPayload
+from services.transformer import transform_frontend_to_model_payload
 from templates import templates
 
 # NEW: simple file-based persistence for saving/loading scenarios
@@ -34,14 +35,10 @@ def health():
 
 
 @app.post("/call-model", response_class=JSONResponse)
-async def call_model(request: Request):
-    try:
-        data = await request.json()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid JSON body")
+async def call_model(data: FrontEndPayload):
+    payload = transform_frontend_to_model_payload(data)
 
     try:
-        payload = transform_frontend_to_model_payload(data) if is_frontend_payload(data) else data
         result = model(payload)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
