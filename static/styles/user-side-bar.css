@@ -50,13 +50,12 @@
 }
 
 .create-user-section {
-  
   > .user-buttons {
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     > img {
+      cursor: pointer;
       height: 2rem;
     }
     > button.create {
@@ -108,8 +107,9 @@ ul.user-list {
 }
 
 ul.user-list > .item {
-  padding: 0.5rem 0;
+  padding: 0.5rem;
   border-bottom: 1px solid var(--stone-3);
+  border-radius: 0.25rem;
 
   display: flex;
   align-items: center;
@@ -178,8 +178,8 @@ ul.user-list > .no-users-message {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -190,16 +190,16 @@ ul.user-list > .no-users-message {
   left: 4px;
   bottom: 3px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #2196f3;
 }
 
 input:checked + .slider:before {

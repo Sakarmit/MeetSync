@@ -10,11 +10,25 @@
 
 button {
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.active {
+  background-color: rgba(52, 58, 64, 0.08) !important;
+  box-shadow: 0 0 0 2px var(--gray-8) !important;
 }
 
 /* Main Content Styles */
 main.main-content.no-user-selected {
-  > header > .user-control {
+  > header > .user-control,
+  > header > div > .generate {
     display: none;
   }
   > .availability-schedule {

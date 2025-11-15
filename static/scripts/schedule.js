@@ -38,7 +38,7 @@ function initializeSchedule() {
   eventBus.addEventListener("selectedUser:selected", () => {
     /** @type {User} */
     const user = context.users.find((u) => u.id === context.selectedUserId);
-
+    if (!user) return;
     loadScheduleData(user.timeSlots);
   });
 
@@ -89,9 +89,16 @@ function initializeSchedule() {
   });
 
   const availabilitySelectors = document.querySelector(".schedule-container > .selectors");
+
   availabilitySelectors.addEventListener("click", (ev) => {
     const selectorEl = ev.target.closest(".selector");
     if (!selectorEl || !availabilitySelectors.contains(selectorEl)) return;
+
+    availabilitySelectors
+      .querySelectorAll("button.selector.active")
+      .forEach((btn) => btn.classList.remove("active"));
+
+    selectorEl.classList.add("active");
 
     paintColor = selectorEl.dataset.type;
   });

@@ -25,9 +25,11 @@ function createUserListItem(name, id) {
     .addEventListener("click", () => eventBus.selectUser(id));
   itemElement.querySelector("img.delete").addEventListener("click", (e) => {
     e.stopPropagation();
-    
+
     if (document.getElementById("confirm-deletion").checked) {
-      let confirmDelete = window.confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`);
+      let confirmDelete = window.confirm(
+        `Are you sure you want to delete user "${name}"? This action cannot be undone.`
+      );
       if (!confirmDelete) {
         return;
       }
@@ -71,6 +73,19 @@ function createUser() {
   eventBus.addUser({ id, name, timeSlots: [], priority: 1 });
 }
 
+function updateUserListSelection() {
+  document
+    .querySelectorAll("ul.user-list > li.item.active")
+    .forEach((li) => li.classList.remove("active"));
+  if (context.selectedUserId === null) return;
+  const idx = context.users.findIndex((u) => u.id === context.selectedUserId);
+  if (idx !== -1) {
+    const listItems = document.querySelectorAll("ul.user-list > li.item");
+    const selectedItem = listItems[idx];
+    if (selectedItem) selectedItem.classList.add("active");
+  }
+}
+
 function initUserSideBar() {
   eventBus.addEventListener("users:updated", () => {
     if (context.users.length > 0) {
@@ -81,19 +96,18 @@ function initUserSideBar() {
   });
 
   eventBus.addEventListener("selectedUser:updated", () => {
-    if (context.selectedUserId === null) {
-      document.querySelector(".main-content").classList.add("no-user-selected");
-      return;
-    }
-
     const idx = context.users.findIndex((u) => u.id === context.selectedUserId);
     const listItems = document.querySelectorAll("ul.user-list > li:not(.no-users-message)");
     const listItem = listItems[idx];
 
     listItem.querySelector(".name").textContent = context.users[idx].name;
+    updateUserListSelection();
   });
+  eventBus.addEventListener("selectedUser:selected", updateUserListSelection);
 
-  const createUserInput = document.querySelector(".create-user-section > .user-buttons > button.create");
+  const createUserInput = document.querySelector(
+    ".create-user-section > .user-buttons > button.create"
+  );
   createUserInput.addEventListener("click", createUser);
 
   document.getElementById("meeting-length-input").addEventListener("change", (e) => {
@@ -181,7 +195,7 @@ function importUsersFromFile(file) {
   const clearExisting =
     context.users.length > 0
       ? window.confirm(
-          "Delete users already in list? \nClick OK to clear all before importing. \nClick Cancel to keep existing users.",
+          "Delete users already in list? \nClick OK to clear all before importing. \nClick Cancel to keep existing users."
         )
       : false;
 

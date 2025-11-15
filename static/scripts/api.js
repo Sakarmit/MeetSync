@@ -21,7 +21,6 @@ async function submitAvailability(users, meeting_length_minutes) {
   });
 
   if (!response.ok) {
-    console.log(response);
     const error = new Error(response.statusText);
     // @ts-ignore
     error.detail = (await response.json()).detail;

@@ -61,7 +61,9 @@ class EventBus extends EventTarget {
     const user = context.users.find((u) => u.id === id);
     if (!user) throw new Error("User ID not found in context.");
 
-    context.selectedUserId = id;
+    if (id === context.selectedUserId) {
+      context.selectedUserId = null;
+    } else context.selectedUserId = id;
 
     this.dispatchEvent(new Event("selectedUser:selected"));
   }
@@ -78,7 +80,7 @@ class EventBus extends EventTarget {
 
     if (context.selectedUserId === id) {
       context.selectedUserId = null;
-      this.dispatchEvent(new Event("selectedUser:updated"));
+      this.dispatchEvent(new Event("selectedUser:selected"));
     }
 
     this.dispatchEvent(new Event("users:updated"));
