@@ -211,7 +211,7 @@ function importUsersFromArray(rawUsers, clearExisting = false) {
 
   preparedUsers.forEach((user) => {
     const listItemHTML = createUserListItem(user.name, user.id);
-    list.appendChild(listItemHTML);
+    document.querySelector("ul.user-list").appendChild(listItemHTML);
     eventBus.addUser(user);
   });
 

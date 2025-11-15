@@ -56,7 +56,7 @@
   max-height: calc(100vh - var(--external-vertical-space));
   width: fit-content;
   overflow: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
 }
 
 .schedule-container > .body > .times {

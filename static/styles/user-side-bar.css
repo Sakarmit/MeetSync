@@ -9,7 +9,7 @@
   border-right: 1px solid var(--stone-3);
   background: var(--gray-0);
   overflow: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
   z-index: 8;
 
   > header {
