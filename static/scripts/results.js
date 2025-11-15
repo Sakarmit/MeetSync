@@ -56,11 +56,7 @@ window.addEventListener("message", (event) => {
     }
 
 });
-document
-        .querySelector(".export")
-        .addEventListener("click", () => {
-            exportResults({}, { filename: "meetsync-results.txt" });
-        });
+
 /**
  *
  * This assumes `result` has shape:
