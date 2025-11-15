@@ -118,6 +118,29 @@ function initUserSideBar() {
     }
     context.meeting_length_minutes = value;
   });
+
+  let times = [];
+  for (let i = 0; i < 24 * 60; i += 15) {
+    const timeString = minutesToTimeString(i);
+    times.push(`<option value="${timeString}">${timeString}</option>`);
+  }
+  document.querySelector("#restriction-range-start").innerHTML = times.join("");
+  times.push(`<option value="24:00">24:00</option>`);
+  document.querySelector("#restriction-range-end").innerHTML = times.join("");
+  document.querySelector("#restriction-range-end").value = "24:00";
+}
+
+/**
+ * Helper: convert minutes-from-midnight to 24h time string.
+ * @param {number} totalMinutes
+ * @returns {string}
+ */
+function minutesToTimeString(totalMinutes) {
+  const hours24 = Math.floor(totalMinutes / 60) % 24;
+  const minutes = totalMinutes % 60;
+  const hh = String(hours24).padStart(2, "0");
+  const mm = String(minutes).padStart(2, "0");
+  return `${hh}:${mm}`;
 }
 
 /**

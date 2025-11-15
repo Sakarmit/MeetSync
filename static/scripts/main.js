@@ -18,8 +18,25 @@ document
       return;
     }
 
+    const dayStart = document.getElementById("restriction-range-start").value;
+    const dayEnd = document.getElementById("restriction-range-end").value;
+    if (parseInt(dayStart.replace(":", "")) >= parseInt(dayEnd.replace(":", ""))) {
+      document.getElementById("work-hours-restriction").classList.add("error");
+      flashMessage("Invalid time range selected.", "error");
+      return;
+    } else if (parseInt(dayEnd.replace(":", "")) - parseInt(dayStart.replace(":", "")) < meeting_length_minutes) {
+      document.getElementById("work-hours-restriction").classList.add("error");
+      flashMessage(
+        "The selected time range is too small for the meeting length.",
+        "error"
+      );
+      return;
+    } else {
+      document.getElementById("work-hours-restriction").classList.remove("error");
+    }
+
     try {
-      const response = await submitAvailability(users, meeting_length_minutes);
+      const response = await submitAvailability(users, meeting_length_minutes, dayStart, dayEnd);
 
       flashMessage("Meeting suggestions generated!", "success");
 

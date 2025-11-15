@@ -109,7 +109,7 @@ def is_frontend_payload(data: Dict[str, Any]) -> bool:
 
 def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
     _validate_frontend_payload(data)
-
+    
     availability = data.get("availability", [])
     attendees: List[Dict[str, Any]] = []
 
@@ -127,6 +127,8 @@ def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
                         availability_type_int = 0
                     case "tentative":
                         availability_type_int = 1
+                    case _:
+                        availability_type_int = -1  # Should not happen due to validation
                 matrix[day][r] = availability_type_int
 
         attendees.append({
@@ -151,6 +153,7 @@ def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
             "hard_block_for_high_priority": hard_block,
         },
         "top_k": int(data.get("top_k", DEFAULT_TOP_K)),
+        "constraints": data.get("constraints", {}),
     }
-
+    
     return transformed
