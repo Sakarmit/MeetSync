@@ -39,7 +39,10 @@ document
       const response = await submitAvailability(users, meeting_length_minutes, dayStart, dayEnd);
 
       flashMessage("Meeting suggestions generated!", "success");
-
+      if (!response.suggestions || response.suggestions.length === 0) {
+        flashMessage("No available meeting times found. Please adjust your settings and try again.", "error");
+        return;
+      }
       const resultsWindow = window.open("/results", "_blank");
       if (resultsWindow) {
         resultsWindow.onload = function () {
