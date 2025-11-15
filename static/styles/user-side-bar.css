@@ -9,6 +9,8 @@
   border-right: 1px solid var(--stone-3);
   background: var(--gray-0);
   overflow: auto;
+  scrollbar-width: none;
+  z-index: 8;
 
   > header {
     margin-bottom: 0.5rem;
@@ -164,10 +166,6 @@ ul.user-list > .item {
 ul.user-list > .no-users-message {
   margin-top: 1rem;
   color: var(--gray-8);
-
-  &.hidden {
-    display: none;
-  }
 }
 
 .delete-slider {

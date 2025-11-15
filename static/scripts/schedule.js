@@ -8,11 +8,14 @@ import { flashMessage } from "./flash.js";
 
 /** @import { AvailabilityType, TimeSlot, User } from './context.js' */
 
+let savedSchedule = true;
+
 function clearSlots() {
   document
     .querySelector(".availability-schedule .slots")
     .querySelectorAll(".slot.selected, .slot.selected-tentative")
     .forEach((s) => s.classList.remove("selected", "selected-tentative"));
+  savedSchedule = false;
 }
 
 /**
@@ -32,6 +35,7 @@ function loadScheduleData(timeSlots) {
       throw new Error(`Slot element not found for day ${day}, row ${row}`);
     }
   });
+  savedSchedule = true;
 }
 
 function initializeSchedule() {
@@ -54,6 +58,7 @@ function initializeSchedule() {
 
     isPainting = true;
     paintAvailabilitySlot(cell, paintColor);
+    savedSchedule = false;
 
     // Prevent drag selection
     e.preventDefault();
@@ -67,6 +72,7 @@ function initializeSchedule() {
     if (!cell) return;
 
     paintAvailabilitySlot(cell, paintColor);
+    if (isPainting) savedSchedule = false;
   });
 
   function endPaint() {
@@ -86,6 +92,7 @@ function initializeSchedule() {
 
     flashMessage("Schedule saved successfully.", "success");
     eventBus.updateSelectedUser({ timeSlots });
+    savedSchedule = true;
   });
 
   const availabilitySelectors = document.querySelector(".schedule-container > .selectors");
@@ -104,4 +111,17 @@ function initializeSchedule() {
   });
 }
 
-export { initializeSchedule };
+function scheduleSavedStateHandler() {
+  if (savedSchedule) return true;
+  const shouldSave = window.confirm(
+    "You have unsaved changes to the schedule. \n\nSave before switching user?"
+  );
+  if (shouldSave) {
+    document.querySelector(".availability-schedule button.save").click();
+    return true;
+  }
+  savedSchedule = true;
+  return true;
+}
+
+export { initializeSchedule, scheduleSavedStateHandler };

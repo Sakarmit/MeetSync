@@ -64,21 +64,26 @@ eventBus.addEventListener("selectedUser:selected", () => {
   input_priority.value = selectedUser.priority;
 });
 
-const userControlSelector = ".main-content > header > .user-control";
-document.querySelector(userControlSelector + " > button.save").addEventListener("click", () => {
-  const userNameInput = document.getElementById("user-name");
-  const userPriorityInput = document.getElementById("user-priority");
+const userNameInput = document.getElementById("user-name");
+userNameInput.addEventListener("change", () => {
   const newName = userNameInput.value.trim();
-  const newPriority = parseInt(userPriorityInput.value.trim(), 10);
-
   if (!newName) {
     flashMessage("User's name cannot be empty.", "error");
     return;
   }
+
+  eventBus.updateSelectedUser({ name: newName });
+  flashMessage("User's name updated successfully.", "success");
+});
+
+const userPriorityInput = document.getElementById("user-priority");
+userPriorityInput.addEventListener("change", () => {
+  const newPriority = parseInt(userPriorityInput.value.trim(), 10);
   if (isNaN(newPriority) || newPriority <= 0) {
     flashMessage("Priority must be a positive integer.", "error");
     return;
   }
-  eventBus.updateSelectedUser({ name: newName, priority: newPriority });
-  flashMessage("User updated successfully.", "success");
+
+  eventBus.updateSelectedUser({ priority: newPriority });
+  flashMessage("User's priority updated successfully.", "success");
 });

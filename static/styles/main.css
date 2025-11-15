@@ -25,12 +25,13 @@ button {
   box-shadow: 0 0 0 2px var(--gray-8) !important;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* Main Content Styles */
 main.main-content.no-user-selected {
   > header > .user-control,
-  > header > div > .generate {
-    display: none;
-  }
   > .availability-schedule {
     display: none;
   }
@@ -98,6 +99,7 @@ main.main-content {
 
 .alert {
   position: fixed;
+  z-index: 10;
   left: 0;
   bottom: 0;
   padding: 1rem;
