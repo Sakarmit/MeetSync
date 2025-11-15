@@ -1,5 +1,6 @@
 import { context, eventBus, exportUsersData, importUsersData } from "./context.js";
 import { flashMessage } from "./flash.js";
+import { scheduleSavedStateHandler } from "./schedule.js";
 
 /**
  * Handler for the `beforeunload` event to prompt the user about unsaved changes.
@@ -20,9 +21,10 @@ function createUserListItem(name, id) {
   const itemElement = document.querySelector(templateSelector).content.cloneNode(true);
 
   itemElement.querySelector(".name").textContent = name;
-  itemElement
-    .querySelector("button.select")
-    .addEventListener("click", () => eventBus.selectUser(id));
+  itemElement.querySelector("button.select").addEventListener("click", () => {
+    if (!scheduleSavedStateHandler()) return;
+    eventBus.selectUser(id);
+  });
   itemElement.querySelector("img.delete").addEventListener("click", (e) => {
     e.stopPropagation();
 
@@ -38,7 +40,8 @@ function createUserListItem(name, id) {
     flashMessage(`User "${name}" deleted.`, "success");
     e.target.parentElement.parentElement.remove();
     if (context.users.length - 1 === 0) {
-      document.querySelector(".no-users-message").classList.remove("hidden");
+      document.querySelector(".no-users-message")?.classList.remove("hidden");
+      document.querySelector("button.generate")?.classList.add("hidden");
     }
     eventBus.deleteUser(id);
   });
@@ -60,7 +63,8 @@ function createUser() {
   }
 
   if (context.users.length === 0) {
-    document.querySelector(".no-users-message").classList.add("hidden");
+    document.querySelector(".no-users-message")?.classList.add("hidden");
+    document.querySelector("button.generate")?.classList.remove("hidden");
   }
 
   const id = Symbol(`User:${name}`);
@@ -105,10 +109,18 @@ function initUserSideBar() {
   });
   eventBus.addEventListener("selectedUser:selected", updateUserListSelection);
 
-  const createUserInput = document.querySelector(
+  const createUserButton = document.querySelector(
     ".create-user-section > .user-buttons > button.create"
   );
-  createUserInput.addEventListener("click", createUser);
+  createUserButton.addEventListener("click", () => {
+    if (!scheduleSavedStateHandler()) return;
+    createUser();
+  });
+
+  const createUserInput = document.getElementById("create-user-input");
+  createUserInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") createUser();
+  });
 
   document.getElementById("meeting-length-input").addEventListener("change", (e) => {
     const value = parseInt(e.target.value, 10);
@@ -186,19 +198,16 @@ function importUsersFromArray(rawUsers, clearExisting = false) {
       .querySelectorAll("ul.user-list > li:not(.no-users-message)")
       .forEach((v) => v.remove());
 
-    const msg = document.querySelector(".no-users-message");
-    if (msg) msg.classList.remove("hidden");
+    document.querySelector(".no-users-message")?.classList.remove("hidden");
+    document.querySelector("button.generate")?.classList.add("hidden");
 
     eventBus.dispatchEvent(new Event("users:updated"));
   }
 
   const preparedUsers = importUsersData(rawUsers);
 
-  const list = document.querySelector("ul.user-list");
-  const noUsersMsg = document.querySelector(".no-users-message");
-  if (noUsersMsg) {
-    noUsersMsg.classList.add("hidden");
-  }
+  document.querySelector(".no-users-message")?.classList.add("hidden");
+  document.querySelector("button.generate")?.classList.remove("hidden");
 
   preparedUsers.forEach((user) => {
     const listItemHTML = createUserListItem(user.name, user.id);
