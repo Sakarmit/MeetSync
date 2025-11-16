@@ -109,6 +109,26 @@ function initializeSchedule() {
 
     paintColor = selectorEl.dataset.type;
   });
+
+  const columnHeaders = document.querySelectorAll(".availability-schedule .column-header");
+  columnHeaders.forEach((header, index) => {
+    header.addEventListener("click", () => {
+      const day = index;
+      const daySlots = slots.querySelectorAll(`.slot[data-day='${day}']`);
+
+      daySlots.forEach((slot) => paintAvailabilitySlot(slot, paintColor));
+    });
+  });
+
+  const rowSelectors = document.querySelectorAll(".availability-schedule .row-selectors > div");
+  rowSelectors.forEach((selector, index) => {
+    selector.addEventListener("click", () => {
+      const row = index;
+      const rowSlots = slots.querySelectorAll(`.slot[data-row='${row}']`);
+
+      rowSlots.forEach((slot) => paintAvailabilitySlot(slot, paintColor));
+    });
+  });
 }
 
 function scheduleSavedStateHandler() {

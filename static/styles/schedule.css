@@ -29,7 +29,7 @@
   background: white;
   border-bottom: var(--border);
   max-width: max-content;
-
+  cursor: pointer;
   display: grid;
   grid-template-columns: repeat(5, var(--cell-w));
 
@@ -37,6 +37,9 @@
     padding: 0.5rem;
     text-align: center;
     font-weight: var(--font-weight-6);
+  }
+  & > .label:hover {
+    background-color: var(--stone-4);
   }
 }
 
@@ -69,11 +72,29 @@
   border-right: var(--border);
 
   > .label {
-    padding: 2px 6px;
     font-size: 0.75rem;
     color: var(--gray-8);
     text-align: center;
     border-bottom: var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    > .row-selectors {
+      display: flex;
+      flex-direction: column;
+      > div {
+        width: 24px;
+        height: var(--cell-h);
+        border: 1px solid var(--stone-3);
+        cursor: pointer;
+        &:last-child {
+          height: calc(var(--cell-h) - 1px);
+        }
+      }
+      > div:hover {
+        background-color: var(--stone-4);
+      }
+    }
   }
 }
 
