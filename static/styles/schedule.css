@@ -4,7 +4,13 @@
   --border: 1px solid var(--stone-3);
   --cell-fill: rgba(37, 99, 235, 0.125);
   --cell-fill-outline: rgb(37, 99, 235); /* selection outline/focus */
+  --cell-fill-tentative: rgba(255, 165, 0, 0.125);
+  --cell-fill-outline-tentative: rgb(255, 165, 0); /* selection outline/focus */
+  --cell-fill-available: white;
   --row-header-w: 68px;
+
+  /* Approx. total space outside the schedule (headers/toolbars/controls) */
+  --external-vertical-space: 20rem;
 }
 
 .availability-schedule {
@@ -23,7 +29,7 @@
   background: white;
   border-bottom: var(--border);
   max-width: max-content;
-
+  cursor: pointer;
   display: grid;
   grid-template-columns: repeat(5, var(--cell-w));
 
@@ -32,42 +38,74 @@
     text-align: center;
     font-weight: var(--font-weight-6);
   }
+  & > .label:hover {
+    background-color: var(--stone-4);
+  }
 }
 
-/* Schedule Grid Body */
+/* Schedule Container: Grid Body & Selectors Legend */
 
-.availability-schedule > .body {
+.schedule-container {
+  width: fit-content;
+
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.schedule-container > .body {
   display: grid;
   grid-template-columns: var(--row-header-w) 1fr;
-  max-height: 32.5rem;
+  max-height: calc(100vh - var(--external-vertical-space));
+  width: fit-content;
   overflow: auto;
+  scrollbar-width: thin;
 }
 
-.availability-schedule > .body > .times {
+.schedule-container > .body > .times {
   display: grid;
-  grid-template-rows: repeat(8, calc(var(--cell-h) * 4));
   position: sticky;
   left: 0;
   background: white;
   z-index: 1;
+  border-left: var(--border);
   border-right: var(--border);
 
   > .label {
-    padding: 2px 6px;
     font-size: 0.75rem;
     color: var(--gray-8);
+    text-align: center;
     border-bottom: var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    > .row-selectors {
+      display: flex;
+      flex-direction: column;
+      > div {
+        width: 24px;
+        height: var(--cell-h);
+        border: 1px solid var(--stone-3);
+        cursor: pointer;
+        &:last-child {
+          height: calc(var(--cell-h) - 1px);
+        }
+      }
+      > div:hover {
+        background-color: var(--stone-4);
+      }
+    }
   }
 }
 
-.availability-schedule > .body > .slots {
+.schedule-container > .body > .slots {
   display: grid;
   grid-template-columns: repeat(5, var(--cell-w));
   grid-auto-rows: var(--cell-h);
   position: relative;
 }
 
-.availability-schedule > .body > .slots > .slot {
+.schedule-container > .body > .slots > .slot {
   border-right: var(--border);
   border-bottom: var(--border);
   cursor: crosshair;
@@ -76,16 +114,93 @@
     background: var(--cell-fill);
     box-shadow: inset 0 0 0 1px var(--cell-fill-outline);
   }
+  &.selected-tentative {
+    background: var(--cell-fill-tentative);
+    box-shadow: inset 0 0 0 1px var(--cell-fill-outline-tentative);
+  }
   &:focus {
     outline: 2px solid var(--cell-fill-outline);
     outline-offset: -2px;
   }
 }
 
+.schedule-container > .selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  button.selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    border: 1px solid lightgray;
+    border-radius: 0.5rem;
+    box-shadow: 2.5px 2.5px 5px darkgray;
+    background-color: white;
+
+    padding: 0.5rem;
+  }
+
+  .box {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid black;
+  }
+  > button.selector[data-type="busy"] > .box {
+    background-color: var(--cell-fill-outline);
+  }
+  > button.selector[data-type="tentative"] > .box {
+    background-color: var(--cell-fill-outline-tentative);
+  }
+  > button.selector[data-type="available"] > .box {
+    background-color: var(--cell-fill-available);
+  }
+}
+
+.schedule-container > .selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  button.selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    border: 1px solid lightgray;
+    border-radius: 0.5rem;
+    box-shadow: 2.5px 2.5px 5px darkgray;
+    background-color: white;
+
+    padding: 0.5rem;
+  }
+
+  > .selector > .box {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid black;
+  }
+  > .selector[data-type="busy"] > .box {
+    background-color: var(--cell-fill-outline);
+  }
+  > .selector[data-type="tentative"] > .box {
+    background-color: var(--cell-fill-outline-tentative);
+  }
+  > .selector[data-type="available"] > .box {
+    background-color: var(--cell-fill-available);
+  }
+}
+
 .availability-schedule > .controls {
-  margin-top: 0.5rem;
+  padding-top: 0.5rem;
   display: flex !important;
+  border-top: var(--border);
   justify-content: space-between;
+  width: calc(var(--row-header-w) + (var(--cell-w) * 5));
+  box-sizing: border-box;
 
   button {
     background: var(--blue-7);
@@ -93,10 +208,5 @@
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
-  }
-
-  > .generate {
-    color: white;
-    background: var(--green-7);
   }
 }

@@ -1,11 +1,14 @@
 //@ts-check
 
+/** @typedef {"busy" | "tentative" | "available"} AvailabilityType */
+
 /**
  * A time slot representing a busy period within a single day.
  * @typedef {Object} TimeSlot
  * @property {number} day - Day of the week. Integer from 0 (Monday) to 4 (Friday).
  * @property {number} startMinute - Integer representing minutes since 00:00.
  * @property {number} endMinute - Integer representing minutes since 00:00; should be greater than `startMinute`.
+ * @property {AvailabilityType} availabilityType - Type of availability for the time slot.
  */
 
 /** @typedef {{ id: Symbol, name: string, timeSlots: TimeSlot[], priority: number }} User */
@@ -58,7 +61,9 @@ class EventBus extends EventTarget {
     const user = context.users.find((u) => u.id === id);
     if (!user) throw new Error("User ID not found in context.");
 
-    context.selectedUserId = id;
+    if (id === context.selectedUserId) {
+      context.selectedUserId = null;
+    } else context.selectedUserId = id;
 
     this.dispatchEvent(new Event("selectedUser:selected"));
   }
@@ -75,7 +80,7 @@ class EventBus extends EventTarget {
 
     if (context.selectedUserId === id) {
       context.selectedUserId = null;
-      this.dispatchEvent(new Event("selectedUser:updated"));
+      this.dispatchEvent(new Event("selectedUser:selected"));
     }
 
     this.dispatchEvent(new Event("users:updated"));
@@ -84,4 +89,33 @@ class EventBus extends EventTarget {
 
 const eventBus = new EventBus();
 
-export { context, eventBus };
+/**
+ * Return a JSON-safe snapshot of all users.
+ * @returns {{ name: string, priority: number, timeSlots: TimeSlot[] }[]}
+ */
+function exportUsersData() {
+  return context.users.map((u) => ({
+    name: u.name,
+    priority: u.priority,
+    timeSlots: Array.isArray(u.timeSlots) ? u.timeSlots : [],
+  }));
+}
+
+/**
+ * Convert JSON-safe user data back into full User objects with new Symbol IDs.
+ * @param {{ name: string, priority?: number, timeSlots?: TimeSlot[] }[]} data
+ * @returns {User[]}
+ */
+function importUsersData(data) {
+  if (!Array.isArray(data)) {
+    throw new Error("importUsersData expected an array");
+  }
+  return data.map((u) => ({
+    id: Symbol(`User:${u.name}`),
+    name: String(u.name ?? "").trim() || "Unnamed",
+    priority: typeof u.priority === "number" && u.priority > 0 ? u.priority : 1,
+    timeSlots: Array.isArray(u.timeSlots) ? u.timeSlots : [],
+  }));
+}
+
+export { context, eventBus, exportUsersData, importUsersData };

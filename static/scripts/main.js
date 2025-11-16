@@ -8,15 +8,54 @@ initUserSideBar();
 initializeSchedule();
 
 document
-  .querySelector("main.main-content .availability-schedule div.controls button.generate")
+  .querySelector("main.main-content header div.header-bar button.generate")
   .addEventListener("click", async () => {
     const users = context.users;
     const meeting_length_minutes = context.meeting_length_minutes;
 
+    if (users.length === 0) {
+      flashMessage("No users to generate meeting for.", "error");
+      return;
+    }
+
+    const dayStart = document.getElementById("restriction-range-start").value;
+    const dayEnd = document.getElementById("restriction-range-end").value;
+    // Convert "HH:MM" to minutes since midnight
+    function timeStringToMinutes(t) {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    }
+    const startMinutes = timeStringToMinutes(dayStart);
+    const endMinutes = timeStringToMinutes(dayEnd);
+    if (startMinutes >= endMinutes) {
+      document.getElementById("work-hours-restriction").classList.add("error");
+      flashMessage("Invalid time range selected.", "error");
+      return;
+    } else if ((endMinutes - startMinutes) < meeting_length_minutes) {
+      document.getElementById("work-hours-restriction").classList.add("error");
+      flashMessage(
+        "The selected time range is too small for the meeting length.",
+        "error"
+      );
+      return;
+    } else {
+      document.getElementById("work-hours-restriction").classList.remove("error");
+    }
+
     try {
-      const response = await submitAvailability(users, meeting_length_minutes);
+      const response = await submitAvailability(users, meeting_length_minutes, dayStart, dayEnd);
+
       flashMessage("Meeting suggestions generated!", "success");
-      console.log("Server response:", response); //TODO: Display response
+      if (!response.suggestions || response.suggestions.length === 0) {
+        flashMessage("No available meeting times found. Please adjust your settings and try again.", "error");
+        return;
+      }
+      const resultsWindow = window.open("/results", "_blank");
+      if (resultsWindow) {
+        resultsWindow.onload = function () {
+          resultsWindow.postMessage(response, window.location.origin);
+        };
+      }
     } catch (error) {
       flashMessage(error.detail, "error", error.status, error.message);
       return;
@@ -24,7 +63,9 @@ document
   });
 
 eventBus.addEventListener("selectedUser:selected", () => {
-  document.querySelector(".main-content").classList.remove("no-user-selected");
+  const selectionState = context.selectedUserId === null;
+  document.querySelector(".main-content").classList.toggle("no-user-selected", selectionState);
+  if (selectionState) return;
   const input_name = document.getElementById("user-name");
   const input_priority = document.getElementById("user-priority");
   const selectedUser = context.users.find((u) => u.id === context.selectedUserId);
@@ -33,21 +74,26 @@ eventBus.addEventListener("selectedUser:selected", () => {
   input_priority.value = selectedUser.priority;
 });
 
-const userControlSelector = ".main-content > header > .user-control";
-document.querySelector(userControlSelector + " > button.save").addEventListener("click", () => {
-  const userNameInput = document.getElementById("user-name");
-  const userPriorityInput = document.getElementById("user-priority");
+const userNameInput = document.getElementById("user-name");
+userNameInput.addEventListener("change", () => {
   const newName = userNameInput.value.trim();
-  const newPriority = parseInt(userPriorityInput.value.trim(), 10);
-
   if (!newName) {
     flashMessage("User's name cannot be empty.", "error");
     return;
   }
+
+  eventBus.updateSelectedUser({ name: newName });
+  flashMessage("User's name updated successfully.", "success");
+});
+
+const userPriorityInput = document.getElementById("user-priority");
+userPriorityInput.addEventListener("change", () => {
+  const newPriority = parseInt(userPriorityInput.value.trim(), 10);
   if (isNaN(newPriority) || newPriority <= 0) {
     flashMessage("Priority must be a positive integer.", "error");
     return;
   }
-  eventBus.updateSelectedUser({ name: newName, priority: newPriority });
-  flashMessage("User updated successfully.", "success");
+
+  eventBus.updateSelectedUser({ priority: newPriority });
+  flashMessage("User's priority updated successfully.", "success");
 });

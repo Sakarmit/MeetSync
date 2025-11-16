@@ -1,14 +1,33 @@
 <aside id="user-sidebar">
-  <header><h1>Users</h1></header>
+  <h1>Settings</h1>
   <div class="settings-section">
     <label for="meeting-length-input">Meeting Length (in minutes)</label>
     <input id="meeting-length-input" type="number" value="15" min="0" max="1440" step="15" />
+    <div class="delete-slider">
+      <label>Confirm User Deletion</label>
+      <label class="switch">
+        <input id="confirm-deletion" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <label>Suggest Meeting Between:</label>
+    <div id="work-hours-restriction">
+      <select id="restriction-range-start" name="range-start"></select>
+      <span>&amp;</span>
+      <select id="restriction-range-end" name="range-end"></select>
+    </div>
   </div>
-  
+    
+  </div>
+  <h1>Users</h1>
   <div class="create-user-section">
     <label for="create-user-input">Add user</label>
     <input id="create-user-input" type="text" placeholder="Enter new user's name" />
-    <button type="button" class="create">Create</button>
+    <div class="user-buttons">
+      <img id="import-users" title="Import Users" src="{{ url_for('static', path='styles/images/import.png') }}" />
+      <img id="export-users" title="Export Users" src="{{ url_for('static', path='styles/images/export.png') }}" />
+      <button type="button" class="create">Create</button>
+    </div>
   </div>
 
   <ul class="user-list">

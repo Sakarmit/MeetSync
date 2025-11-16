@@ -2,8 +2,8 @@ from typing import Any, Dict, List
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 SLOT_MINUTES = 15
-DAY_START_MIN = 9 * 60
-DAY_END_MIN = 17 * 60
+DAY_START_MIN = 0 * 60
+DAY_END_MIN = 24 * 60
 SLOTS_PER_DAY = int((DAY_END_MIN - DAY_START_MIN) / SLOT_MINUTES)
 
 DEFAULT_MEETING_LENGTH_MINUTES = 60
@@ -15,6 +15,8 @@ DEFAULT_HARD_BLOCK = False
 def _validate_time_slot(ts: Dict[str, Any]) -> None:
     if not all(isinstance(ts[k], int) for k in ("day", "startMinute", "endMinute")):
         raise ValueError("day, startMinute, and endMinute must be integers")
+    if "availabilityType" not in ts:
+        raise ValueError("availabilityType is required in TimeSlot")
 
     day = ts["day"]
     start = ts["startMinute"]
@@ -29,6 +31,9 @@ def _validate_time_slot(ts: Dict[str, Any]) -> None:
     if (start - DAY_START_MIN) % SLOT_MINUTES != 0 or (end - DAY_START_MIN) % SLOT_MINUTES != 0:
         raise ValueError(f"Times must follow increments of {SLOT_MINUTES} minutes")
 
+    if ts["availabilityType"] not in ("busy", "tentative"):
+        raise ValueError("availabilityType must be either 'busy' or 'tentative'. 'available' slots should be omitted")
+
 def _validate_frontend_payload(data: Dict[str, Any]) -> None:
     availability = data.get("availability", [])
     if not isinstance(availability, list) or len(availability) == 0:
@@ -39,7 +44,6 @@ def _validate_frontend_payload(data: Dict[str, Any]) -> None:
         raise ValueError("meeting_length_minutes must be a positive integer")
     if meeting_length > (DAY_END_MIN - DAY_START_MIN):
         raise ValueError(f"meeting_length_minutes cannot exceed the length of the day ({DAY_END_MIN - DAY_START_MIN} minutes)")
-    # if meeting_length % SLOT_MINUTES != 0:
 
     top_k = data.get("top_k", DEFAULT_TOP_K)
     if not isinstance(top_k, int) or top_k <= 0:
@@ -105,7 +109,7 @@ def is_frontend_payload(data: Dict[str, Any]) -> bool:
 
 def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
     _validate_frontend_payload(data)
-
+    
     availability = data.get("availability", [])
     attendees: List[Dict[str, Any]] = []
 
@@ -116,8 +120,16 @@ def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
             day = int(ts["day"])
             start_row = int((int(ts["startMinute"]) - DAY_START_MIN) / SLOT_MINUTES)
             end_row = int((int(ts["endMinute"]) - DAY_START_MIN) / SLOT_MINUTES)
+            availability_type = ts["availabilityType"]
             for r in range(start_row, end_row):
-                matrix[day][r] = 0
+                match availability_type:
+                    case "busy":
+                        availability_type_int = 0
+                    case "tentative":
+                        availability_type_int = 1
+                    case _:
+                        availability_type_int = -1  # Should not happen due to validation
+                matrix[day][r] = availability_type_int
 
         attendees.append({
             "name": user.get("name"),
@@ -141,6 +153,7 @@ def transform_frontend_to_model_payload(data: Dict[str, Any]) -> Dict[str, Any]:
             "hard_block_for_high_priority": hard_block,
         },
         "top_k": int(data.get("top_k", DEFAULT_TOP_K)),
+        "constraints": data.get("constraints", {}),
     }
-
+    
     return transformed

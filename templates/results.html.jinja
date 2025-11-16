@@ -1,0 +1,61 @@
+{% extends "base.html.jinja" %}
+
+{% block title %}MeetSync{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', path='styles/main.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', path='styles/results.css') }}" />
+  <script src="{{ url_for('static', path='scripts/results.js') }}" type="module"></script>
+{% endblock %}
+
+{% block content %}
+  <header>
+    <h1>Top Recommendation</h1>
+    <button type="button" class="export">Export</button>
+    <div class="meeting-length"></div>
+  </header>
+  <main>
+    <h2 class="results-title"></h2>
+    <ul class="result-list">
+      <template>
+        <li class="item">
+          <div class="row-one">
+            <div class="date-time"></div>
+            <div class="scores">
+              <div class="coverage">
+                Coverage:
+                <div class="coverage-value"></div>
+              </div>
+              <div class="score">
+                Score:
+                <div class="score-value"></div>
+              </div>
+            </div>
+          </div>
+          <div class="divider">
+            <hr>
+            Conflicts
+            <hr>
+          </div>
+          <div class="conflicts">
+            <div class="conflict-values"></div>
+          </div>
+        </li>
+      </template>
+    </ul>
+  </main>
+  <footer>
+      <div id="flash-messages">
+      <template>
+        <div class="alert alert-type">
+          <img class="alert-icon" src="{{ url_for('static', path='styles/images/error.png') }}" alt="Status icon" />
+          <div>
+            <strong>STATUS</strong>
+            <span>message</span>
+          </div>
+          <img class="alert-close" src="/static/styles/images/close.png" alt="Close" />
+        </div>
+      </template>
+    </div>
+    </footer>
+{% endblock %}

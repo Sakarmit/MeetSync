@@ -24,6 +24,9 @@ os.makedirs(DATA_DIR, exist_ok=True)
 async def main_page(request: Request):
     return templates.TemplateResponse("main.html.jinja", {"request": request})
 
+@app.get("/results", response_class=HTMLResponse)
+async def results_page(request: Request):
+    return templates.TemplateResponse("results.html.jinja", {"request": request})
 
 @app.get("/health")
 def health():

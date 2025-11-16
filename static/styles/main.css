@@ -10,13 +10,28 @@
 
 button {
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.active {
+  background-color: rgba(52, 58, 64, 0.08) !important;
+  box-shadow: 0 0 0 2px var(--gray-8) !important;
+}
+
+.hidden {
+  display: none !important;
 }
 
 /* Main Content Styles */
 main.main-content.no-user-selected {
-  > header > .user-control {
-    display: none;
-  }
+  > header > .user-control,
   > .availability-schedule {
     display: none;
   }
@@ -35,6 +50,14 @@ main.main-content {
   margin-bottom: 1rem;
   > h1 {
     font-size: 1.5rem;
+  }
+
+  > .generate {
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background: var(--green-7);
   }
 }
 
@@ -74,8 +97,9 @@ main.main-content {
   }
 }
 
-main.main-content .alert {
+.alert {
   position: fixed;
+  z-index: 10;
   left: 0;
   bottom: 0;
   padding: 1rem;
@@ -92,33 +116,33 @@ main.main-content .alert {
   animation: alert-slide-up 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-main.main-content .alert-success {
+.alert-success {
   background-color: #d1e7dd;
   border-color: #badbcc;
   color: #0f5132;
 }
 
-main.main-content .alert-error {
+.alert-error {
   background-color: #f8d7da;
   border-color: #f5c2c7;
   color: #842029;
 }
 
-main.main-content .alert img {
+.alert img {
   width: 1.5rem;
   height: 1.5rem;
 }
 
-main.main-content .alert span {
+.alert span {
   display: flex;
 }
 
-main.main-content .alert strong {
+.alert strong {
   font-size: 1.1rem;
   letter-spacing: 0.5px;
 }
 
-main.main-content .alert .alert-close {
+.alert .alert-close {
   opacity: 0.25;
   transition: opacity 0.2s;
   margin-left: auto;

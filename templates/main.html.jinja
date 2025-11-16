@@ -12,8 +12,9 @@
 
   <main class="main-content no-user-selected ">
     <header>
-      <div class="options-bar">
+      <div class="header-bar">
         <h1>MeetSync</h1>
+        <button type="button" class="generate hidden">Generate</button>
       </div>
       <div class="user-control">
         <label for="user-name">Name:</label>
@@ -32,7 +33,6 @@
           min="0"
           required
         />
-        <button class="save" type="button">Save</button>
       </div>
     </header>
 
@@ -42,7 +42,7 @@
       <div id="flash-messages">
       <template>
         <div class="alert alert-type">
-          <img class="alert-icon" src="{{ url_for('static', path='styles/images/type.png') }}" alt="Status icon" />
+          <img class="alert-icon" src="{{ url_for('static', path='styles/images/error.png') }}" alt="Status icon" />
           <div>
             <strong>STATUS</strong>
             <span>message</span>

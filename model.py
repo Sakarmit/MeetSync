@@ -153,7 +153,9 @@ def _passes_global_blockers(
         day_open = window_start.replace(hour=hs_h, minute=hs_m)
         day_close = window_start.replace(hour=he_h, minute=he_m)
         if not (window_start >= day_open and window_end <= day_close):
+            print(start_idx, window_start, day_open, day_close, window_end)
             return False
+            
 
     # Lunch blackout
     if blockers.get("lunch"):
@@ -282,7 +284,7 @@ def model(data: dict) -> dict:
 
     # Config blocks
     schedule_cfg = data.get("schedule", {})
-    day_start = schedule_cfg.get("day_start", "09:00")
+    day_start = schedule_cfg.get("day_start", "00:00")
     timezone = schedule_cfg.get("timezone", "America/New_York")
 
     constraints = data.get("constraints", {})
