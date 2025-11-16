@@ -2,9 +2,10 @@ import { context, eventBus } from "./context.js";
 import {
   compressSelectedSlots,
   decompressTimeSlots,
-  paintAvailabilitySlot,
+  paintAvailabilitySlot
 } from "./schedule/schedule-util.js";
 import { flashMessage } from "./flash.js";
+import { popupMessage } from "./popup.js";
 
 /** @import { AvailabilityType, TimeSlot, User } from './context.js' */
 
@@ -15,7 +16,6 @@ function clearSlots() {
     .querySelector(".availability-schedule .slots")
     .querySelectorAll(".slot.selected, .slot.selected-tentative")
     .forEach((s) => s.classList.remove("selected", "selected-tentative"));
-  savedSchedule = false;
 }
 
 /**
@@ -40,9 +40,22 @@ function loadScheduleData(timeSlots) {
 
 function initializeSchedule() {
   eventBus.addEventListener("selectedUser:selected", () => {
+    if (context.selectedUserId === null) {
+      clearSlots();
+      return;
+    }
+
     /** @type {User} */
     const user = context.users.find((u) => u.id === context.selectedUserId);
-    if (!user) return;
+    if (!user) {
+      clearSlots();
+      flashMessage("Selected user not found. Schedule cleared.", "warning");
+      console.warn(
+        `selectedUserId (${context.selectedUserId}) does not match any user in context.users.`
+      );
+      return;
+    }
+
     loadScheduleData(user.timeSlots);
   });
 
@@ -83,17 +96,31 @@ function initializeSchedule() {
   slots.addEventListener("mouseleave", endPaint);
   window.addEventListener("blur", endPaint); // Stop painting if window loses focus
 
-  const clearButtonSelector = ".availability-schedule button.clear";
-  document.querySelector(clearButtonSelector).addEventListener("click", clearSlots);
-
-  document.querySelector(".availability-schedule button.save").addEventListener("click", () => {
-    const selectedSlots = slots.querySelectorAll(".slot.selected, .slot.selected-tentative");
-    const timeSlots = compressSelectedSlots(selectedSlots);
-
-    flashMessage("Schedule saved successfully.", "success");
-    eventBus.updateSelectedUser({ timeSlots });
-    savedSchedule = true;
+  const clearButtonSelector = ".availability-schedule .controls button.clear";
+  document.querySelector(clearButtonSelector).addEventListener("click", () => {
+    clearSlots();
+    savedSchedule = false;
   });
+
+  const resetButtonSelector = ".availability-schedule .controls button.reset";
+  document.querySelector(resetButtonSelector).addEventListener("click", async () => {
+    const res = await popupMessage("Are you sure you want to reset schedule to last save?", [
+      { label: "Reset", className: "destructive" }
+    ]);
+    if (res !== "Reset") return;
+    loadScheduleData(context.users.find((u) => u.id === context.selectedUserId)?.timeSlots || []);
+  });
+
+  document
+    .querySelector(".availability-schedule .controls button.save")
+    .addEventListener("click", () => {
+      const selectedSlots = slots.querySelectorAll(".slot.selected, .slot.selected-tentative");
+      const timeSlots = compressSelectedSlots(selectedSlots);
+
+      flashMessage("Schedule saved successfully.", "success");
+      eventBus.updateSelectedUser({ timeSlots });
+      savedSchedule = true;
+    });
 
   const availabilitySelectors = document.querySelector(".schedule-container > .selectors");
 
@@ -131,15 +158,18 @@ function initializeSchedule() {
   });
 }
 
-function scheduleSavedStateHandler() {
+async function scheduleSavedStateHandler() {
   if (savedSchedule) return true;
-  const shouldSave = window.confirm(
-    "You have unsaved changes to the schedule. \n\nSave before switching user?"
+  const buttons = [
+    { label: "Save", className: "confirm" },
+    { label: "Don't Save", className: "destructive" }
+  ];
+  const res = await popupMessage(
+    "You have unsaved changes to your schedule.\nDo you want to save them?",
+    buttons
   );
-  if (shouldSave) {
-    document.querySelector(".availability-schedule button.save").click();
-    return true;
-  }
+  if (res === "Cancel") return false;
+  if (res === "Save") document.querySelector(".availability-schedule button.save").click();
   savedSchedule = true;
   return true;
 }

@@ -36,6 +36,17 @@
       </div>
     </header>
 
+    <div class="popup-overlay hidden">
+      <div class="popup">
+        <div class="popup-message">
+          <img class="popup-icon" src="{{ url_for('static', path='styles/images/warning.png') }}" alt="Status icon" />
+          <span>This is a warning.</span>
+        </div>
+        <div class="choices">
+        </div>
+      </div>
+    </div>
+
     {% include "schedule.html.jinja" %}
 
     <footer>

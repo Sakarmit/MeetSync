@@ -1,6 +1,7 @@
 import { context, eventBus, exportUsersData, importUsersData } from "./context.js";
 import { flashMessage } from "./flash.js";
 import { scheduleSavedStateHandler } from "./schedule.js";
+import { popupMessage } from "./popup.js";
 
 /**
  * Handler for the `beforeunload` event to prompt the user about unsaved changes.
@@ -21,18 +22,19 @@ function createUserListItem(name, id) {
   const itemElement = document.querySelector(templateSelector).content.cloneNode(true);
 
   itemElement.querySelector(".name").textContent = name;
-  itemElement.querySelector("button.select").addEventListener("click", () => {
-    if (!scheduleSavedStateHandler()) return;
+  itemElement.querySelector("button.select").addEventListener("click", async () => {
+    if ((await scheduleSavedStateHandler()) === false) return;
     eventBus.selectUser(id);
   });
-  itemElement.querySelector("img.delete").addEventListener("click", (e) => {
+  itemElement.querySelector("img.delete").addEventListener("click", async (e) => {
     e.stopPropagation();
 
     if (document.getElementById("confirm-deletion").checked) {
-      let confirmDelete = window.confirm(
-        `Are you sure you want to delete user "${name}"? This action cannot be undone.`
+      const res = await popupMessage(
+        `Are you sure you want to delete user "${name}"?\nThis action cannot be undone.`,
+        [{ label: "Delete", className: "destructive" }],
       );
-      if (!confirmDelete) {
+      if (res !== "Delete") {
         return;
       }
     }
@@ -110,10 +112,10 @@ function initUserSideBar() {
   eventBus.addEventListener("selectedUser:selected", updateUserListSelection);
 
   const createUserButton = document.querySelector(
-    ".create-user-section > .user-buttons > button.create"
+    ".create-user-section > .user-buttons > button.create",
   );
-  createUserButton.addEventListener("click", () => {
-    if (!scheduleSavedStateHandler()) return;
+  createUserButton.addEventListener("click", async () => {
+    if ((await scheduleSavedStateHandler()) === false) return;
     createUser();
   });
 
@@ -125,6 +127,7 @@ function initUserSideBar() {
   document.getElementById("meeting-length-input").addEventListener("change", (e) => {
     const value = parseInt(e.target.value, 10);
     if (isNaN(value) || value <= 0) {
+      flashMessage("Meeting length must be a positive number.", "warning");
       e.target.value = context.meeting_length_minutes;
       return;
     }
@@ -223,13 +226,16 @@ function importUsersFromArray(rawUsers, clearExisting = false) {
  * Prompts whether to clear existing users if any are present.
  * @param {File} file
  */
-function importUsersFromFile(file) {
-  const clearExisting =
-    context.users.length > 0
-      ? window.confirm(
-          "Delete users already in list? \nClick OK to clear all before importing. \nClick Cancel to keep existing users."
-        )
-      : false;
+async function importUsersFromFile(file) {
+  let clearExisting = false;
+  if (context.users.length > 0) {
+    const res = await popupMessage("Users already exist?", [
+      { label: "Keep", className: "confirm" },
+      { label: "Delete", className: "destructive" },
+    ]);
+    if (res === "Cancel") return;
+    clearExisting = res === "Delete";
+  }
 
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -245,7 +251,8 @@ function importUsersFromFile(file) {
   reader.readAsText(file);
 }
 
-document.getElementById("import-users").addEventListener("click", (e) => {
+document.getElementById("import-users").addEventListener("click", async (e) => {
+  if ((await scheduleSavedStateHandler()) === false) return;
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = "application/json";

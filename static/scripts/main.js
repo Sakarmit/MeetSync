@@ -1,15 +1,24 @@
 import { submitAvailability } from "./api.js";
 import { context, eventBus } from "./context.js";
 import { initUserSideBar } from "./user_side_bar.js";
-import { initializeSchedule } from "./schedule.js";
+import { initializeSchedule, scheduleSavedStateHandler } from "./schedule.js";
 import { flashMessage } from "./flash.js";
 
 initUserSideBar();
 initializeSchedule();
 
+window.addEventListener("error", (event) => {
+  flashMessage(event.message, "error");
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  flashMessage(event.reason?.toString() || "Unhandled promise rejection", "error");
+});
+
 document
   .querySelector("main.main-content header div.header-bar button.generate")
   .addEventListener("click", async () => {
+    if ((await scheduleSavedStateHandler()) === false) return;
     const users = context.users;
     const meeting_length_minutes = context.meeting_length_minutes;
 
