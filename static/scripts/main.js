@@ -20,11 +20,18 @@ document
 
     const dayStart = document.getElementById("restriction-range-start").value;
     const dayEnd = document.getElementById("restriction-range-end").value;
-    if (parseInt(dayStart.replace(":", "")) >= parseInt(dayEnd.replace(":", ""))) {
+    // Convert "HH:MM" to minutes since midnight
+    function timeStringToMinutes(t) {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    }
+    const startMinutes = timeStringToMinutes(dayStart);
+    const endMinutes = timeStringToMinutes(dayEnd);
+    if (startMinutes >= endMinutes) {
       document.getElementById("work-hours-restriction").classList.add("error");
       flashMessage("Invalid time range selected.", "error");
       return;
-    } else if (parseInt(dayEnd.replace(":", "")) - parseInt(dayStart.replace(":", "")) < meeting_length_minutes) {
+    } else if ((endMinutes - startMinutes) < meeting_length_minutes) {
       document.getElementById("work-hours-restriction").classList.add("error");
       flashMessage(
         "The selected time range is too small for the meeting length.",
