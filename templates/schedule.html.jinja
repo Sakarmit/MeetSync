@@ -10,7 +10,8 @@
     <div class="body">
       <div class="times">
         {% for h in range(24) %}
-          <div class="label"> {{ "%02d:00" % h }}
+          <div class="label"> 
+            <span>{{ "%02d:00" % h }}</span>
             <div class="row-selectors">
               <div></div>
               <div></div>
@@ -56,7 +57,10 @@
   </div>
 
   <div class="controls">
+      <div>
+      <button type="button" class="reset">Reset</button>
       <button type="button" class="clear">Clear</button>
+      </div>
       <button type="button" class="save">Save</button>
   </div>
 </div>

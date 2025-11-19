@@ -114,6 +114,33 @@ main.main-content {
   transform: translateY(0);
   opacity: 1;
   animation: alert-slide-up 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+
+  img {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  span {
+    display: flex;
+  }
+
+  strong {
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+  }
+
+  .alert-close {
+    opacity: 0.25;
+    transition: opacity 0.2s;
+    margin-left: auto;
+    cursor: pointer;
+    width: 0.75rem;
+    height: 0.75rem;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 .alert-success {
@@ -122,35 +149,95 @@ main.main-content {
   color: #0f5132;
 }
 
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+  color: #664d03;
+}
+
 .alert-error {
   background-color: #f8d7da;
   border-color: #f5c2c7;
   color: #842029;
 }
 
-.alert img {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.alert span {
+/* Popup Styles */
+.main-content > .popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9;
 }
 
-.alert strong {
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
+.main-content > .popup-overlay > .popup {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 25%;
+  aspect-ratio: 3/1;
+  max-width: 50%;
+  max-height: 33%;
+  padding: 1.5rem;
+  border: 0.25rem dashed var(--stone-4);
+  border-radius: 0.5rem;
+  background: white;
+  display: flex;
+  flex-direction: column;
 
-.alert .alert-close {
-  opacity: 0.25;
-  transition: opacity 0.2s;
-  margin-left: auto;
-  cursor: pointer;
-  width: 0.75rem;
-  height: 0.75rem;
+  > .popup-message {
+    display: flex;
+    background: var(--gray-3);
+    border-radius: 0.5rem;
+    align-items: center;
+    gap: 1rem;
+    flex-grow: 1;
+    padding: 0.5rem;
+    justify-content: flex-start;
+  }
 
-  &:hover {
-    opacity: 1;
+  img {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  span {
+    white-space: pre-line;
+    font-size: 1.25rem;
+  }
+
+  .choices {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: flex-end;
+    border-radius: 0.25rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.25rem;
+      background: var(--stone-4);
+      color: white;
+    }
+
+    button.confirm {
+      background: var(--blue-7);
+    }
+
+    button.warning {
+      background: var(--yellow-7);
+    }
+
+    button.destructive {
+      background: var(--red-7);
+    }
+
+    button.cancel {
+      background: var(--gray-5);
+    }
   }
 }

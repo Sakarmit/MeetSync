@@ -1,7 +1,7 @@
 /**
  * Display a flash message.
  * @param {string} msg
- * @param {'success'|'error'} type
+ * @param {'success'|'warning'|'error'} type
  * @param {number} status
  * @param {string} errType
  */

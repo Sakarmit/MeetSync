@@ -1,11 +1,14 @@
 :root {
   --gray-0: #f8f9fa;
   --gray-3: #dee2e6;
+  --gray-5: #adb5bd;
   --gray-8: #343a40;
   --stone-3: #e0e4e5;
   --stone-4: #d1d6d8;
   --blue-7: #1c7ed6;
   --green-7: #37b24d;
+  --orange-7: #fd9a01;
+  --red-7: #fe2712;
 
   --font-weight-6: 600;
 }
