@@ -60,20 +60,20 @@ Once started, the app will be available at [http://localhost:8000](http://localh
 
 ### Initial View
 
-![Program at the Start](screenshots/Initial.png)
+![Program at the Start](screenshots/initial-view.png)
 
 ### User View
 
-![Individual User Page](<screenshots/Example User Schedule.png>)
+![Individual User Page](screenshots/example-user-schedule.png)
 
 ### Error/Warning Popups
 
-![Error Popup](<screenshots/Error Popup.png>)
-![Warning Dialog](<screenshots/Warning Choice.png>)
+![Error Popup](screenshots/error-popup.png)
+![Warning Dialog](screenshots/warning-choice.png)
 
 ### Result Page
 
-![alt text](screenshots/Result.png)
+![alt text](screenshots/result-view.png)
 
 ## Folder/File Structure
 
