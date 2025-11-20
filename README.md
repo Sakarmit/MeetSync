@@ -52,6 +52,17 @@ Before running the application, ensure you have Python 3.13 or higher installed,
 
 Once started, the app will be available at [http://localhost:8000](http://localhost:8000) by default.
 
+## Screenshots
+### Initial View
+![Program at the Start](screenshots/Initial.png)
+### User View
+![Individual User Page](<screenshots/Example User Schedule.png>)
+### Error/Warning Popups
+![Error Popup](<screenshots/Error Popup.png>)
+![Warning Dialog](<screenshots/Warning Choice.png>)
+### Result Page
+![alt text](screenshots/Result.png)
+
 ## Folder/File Structure
 
 - `templates` — Jinja templates used to render views (e.g. `main.html.jinja`, `base.html.jinja`, `schedule.html.jinja`).
