@@ -1,17 +1,22 @@
 # MeetSync
 
-## Hosted Demo Link
+## Hosted demo
 
-[Link](https://meetsync-l0t8.onrender.com)  
-(May take a moment to spin up)
+Link (may take a moment to start): https://meetsync-l0t8.onrender.com/
 
-## Local Setup Instructions
+Hosted using [Render](https://render.com/).
 
-### Using uv (Recommended)
+## Local setup instructions and dependencies
 
-[Astral's uv](https://docs.astral.sh/uv/) is a tool to manage and run Python applications. This is an external dependency and needs to be hinstalled separately. [Follow instructions here to install](https://docs.astral.sh/uv/getting-started/installation/).
+The only direct Python dependency is `fastapi[standard]` version 0.119. All dependencies (direct and indirect) are listed in `requirements.txt`. All dependencies will be installed automatically when following the setup instructions below.
 
-(Open Command Prompt/Terminal within the project folder)
+Two methods are provided to set up and run the application locally: using uv (recommended) or using Python + pip.
+
+Run the commands below from the project's root directory.
+
+### Using uv (recommended)
+
+[Astral's uv](https://docs.astral.sh/uv/) is a tool for managing and running Python applications. This is an external dependency and must be installed separately (see https://docs.astral.sh/uv/getting-started/installation/). The application was developed and tested with uv version 0.9.5, but it may work with other versions that support Python 3.13.
 
 1. Install dependencies and set up the virtual environment:
 
@@ -27,18 +32,33 @@
 
 ### Using Python + pip
 
-Before running the application, ensure you have Python 3.13 or higher installed, and `pip` is available and up to date. \
-(Open Command Prompt/Terminal within the project folder)
+Ensure Python 3.13 (or a compatible 3.x) and pip are installed.
 
 1. Create and activate a virtual environment:
 
    ```shell
-   python3 -m venv .venv
-   #Windows
-   source .venv/Scripts/activate
-   #Mac/Linux
-   source .venv/bin/activate
+   python -m venv .venv
    ```
+
+   - PowerShell (Windows):
+
+     ```powershell
+     .\.venv\Scripts\Activate.ps1
+     ```
+
+   - Git Bash (Windows):
+
+     ```bash
+     source .venv/Scripts/activate
+     ```
+
+   - Bash/Zsh (macOS/Linux):
+
+     ```bash
+     source .venv/bin/activate
+     ```
+
+   - Or use your preferred method to create and activate a virtual environment.
 
 2. Install dependencies:
 
@@ -52,42 +72,39 @@ Before running the application, ensure you have Python 3.13 or higher installed,
    fastapi run
    ```
 
-## Running the Application
+## Running the application
 
-Once started, the app will be available at [http://localhost:8000](http://localhost:8000) by default.
+Once started, the app will be available at http://localhost:8000 by default. The terminal will display the exact URL to access the app.
 
 ## Screenshots
 
-### Initial View
+### Initial view
 
 ![Program at the Start](screenshots/initial-view.png)
 
-### User View
+### User editing view
 
 ![Individual User Page](screenshots/example-user-schedule.png)
 
-### Error/Warning Popups
+### Error/warning popups
 
 ![Error Popup](screenshots/error-popup.png)
 ![Warning Dialog](screenshots/warning-choice.png)
 
-### Result Page
+### Result page
 
-![alt text](screenshots/result-view.png)
+![Result Page](screenshots/result-view.png)
 
-## Folder/File Structure
+## Folder/file structure
 
-- `templates` — Jinja templates used to render views (e.g. `main.html.jinja`, `base.html.jinja`, `schedule.html.jinja`).
-
-- `static` — Frontend assets (styles, scripts, images). Holds CSS under `styles/` and JS under `scripts/` (UI and client logic).
-
-- `services` — Backend service modules and middleware logic (e.g. `transformer.py`). These provide logic used by the app's endpoints and background tasks.
-
-- `main.py` — Application entry/host file (starts the FastAPI app or wiring for middleware/hosting).
-
+- `templates/` — Jinja templates used to render views (e.g. `main.html.jinja`, `base.html.jinja`, `schedule.html.jinja`).
+- `static/` — Frontend assets (styles, scripts, images). Contains CSS under `styles/` and JavaScript (UI and client logic) under `scripts/`.
+- `services/` — Backend service modules (e.g. `transformer.py`).
+- `templates.py` — Creates the Jinja `templates` object used to render HTML views.
+- `main.py` — Application entry/host file (defines the FastAPI app and mounts routes).
 - `model.py` — Heuristic model and supporting code used by the scheduler/transformer logic.
 
-## Team
+## Team members
 
 - Zachery Davis
 - Brian Nguyen
