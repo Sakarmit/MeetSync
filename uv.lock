@@ -300,7 +300,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastapi", extras = ["standard"], specifier = ">=0.119.0" }]
+requires-dist = [{ name = "fastapi", extras = ["standard"], specifier = ">=0.119.0,<0.120.0" }]
 
 [[package]]
 name = "pydantic"
