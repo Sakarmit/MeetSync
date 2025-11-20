@@ -1,0 +1,97 @@
+[
+  {
+    "name": "One Slot User",
+    "priority": 1,
+    "timeSlots": [
+      {
+        "day": 0,
+        "startMinute": 0,
+        "endMinute": 120,
+        "availabilityType": "busy"
+      },
+      {
+        "day": 0,
+        "startMinute": 135,
+        "endMinute": 150,
+        "availabilityType": "busy"
+      },
+      {
+        "day": 0,
+        "startMinute": 165,
+        "endMinute": 1440,
+        "availabilityType": "busy"
+      },
+      {
+        "day": 1,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "busy"
+      },
+      {
+        "day": 2,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "busy"
+      },
+      {
+        "day": 3,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "busy"
+      },
+      {
+        "day": 4,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "busy"
+      }
+    ]
+  },
+  {
+    "name": "Always Busy User",
+    "priority": 1,
+    "timeSlots": [
+      {
+        "day": 0,
+        "startMinute": 0,
+        "endMinute": 120,
+        "availabilityType": "tentative"
+      },
+      {
+        "day": 0,
+        "startMinute": 150,
+        "endMinute": 1440,
+        "availabilityType": "tentative"
+      },
+      {
+        "day": 1,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "tentative"
+      },
+      {
+        "day": 2,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "tentative"
+      },
+      {
+        "day": 3,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "tentative"
+      },
+      {
+        "day": 4,
+        "startMinute": 0,
+        "endMinute": 1440,
+        "availabilityType": "tentative"
+      }
+    ]
+  },
+  {
+    "name": "Free User",
+    "priority": 1,
+    "timeSlots": []
+  }
+]
